@@ -2,8 +2,8 @@
 public enum PlayEvents
 {
     PLAYER_ENTERED_LOBBY,
-    CATEGORY_SELECTED,
-    TEST_EVENT 
+    SEND_CATEGORY,
+    END
 }
 
 public enum RoomState
@@ -16,6 +16,11 @@ public class ProcessedEvent
 {
     public PlayEvents Event { get; set; }
     public string Data { get; set; }
+
+    public override string ToString()
+    {
+        return $"{Event}|{Data}";
+    }
 }
 public static class EventProcessor
 {
@@ -24,7 +29,7 @@ public static class EventProcessor
         return playEvent.ToString();
     }
 
-    public static string SendEventWithData(PlayEvents playEvent, string data)
+    public static string SendEventWithData(PlayEvents playEvent, object data)
     {
         return $"{playEvent}|{data}";
     }

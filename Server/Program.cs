@@ -7,6 +7,7 @@ class GameServer
     static Dictionary<TcpClient, Client> clients = new Dictionary<TcpClient, Client>();
     static object lockObj = new object();
     static List<string> Categories = new List<string>();
+    static int ClientsCount = 0;
     static void Main()
     {
         
@@ -28,14 +29,15 @@ class GameServer
        
         NetworkStream stream = ClientConnection.GetStream();
         BinaryReader reader = new BinaryReader(stream);
-        BinaryWriter writer = new BinaryWriter(stream);
+        BinaryWriter WriteToClient = new BinaryWriter(stream);
         Client client;
 
         string guestUsername = reader.ReadString();
 
         lock (lockObj)
-        {    
-            client = new Client(clients.Count +1, guestUsername);
+        {
+            int id = ++ClientsCount;
+            client = new Client(id, guestUsername);
             clients[ClientConnection] = client;
            
         }
@@ -54,11 +56,12 @@ class GameServer
                         Console.WriteLine($"{clients[ClientConnection].Name} requested categories.");
                         lock (lockObj)
                         {
-                            writer.Write(Categories.Count);
                             foreach (string category in Categories)
                             {
-                                writer.Write(category); 
+                                WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.SEND_CATEGORY, category)); 
                             }
+                            WriteToClient.Write(EventProcessor.EventAsSting(PlayEvents.END));
+
                         }
                         break;
                    
