@@ -1,9 +1,12 @@
-
+﻿
 public enum PlayEvents
 {
     PLAYER_ENTERED_LOBBY,
     SEND_CATEGORY,
-    END
+    END,
+    CREATE_ROOM,
+    ROOM_CREATED,
+    ROOM_UPDATE
 }
 
 public enum RoomState
@@ -59,4 +62,5 @@ public static class EventProcessor
             };
         }
     }
+
 }

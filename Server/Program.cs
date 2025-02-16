@@ -8,6 +8,8 @@ class GameServer
     static object lockObj = new object();
     static List<string> Categories = new List<string>();
     static int ClientsCount = 0;
+    static List<Room> rooms = new List<Room>();
+
     static void Main()
     {
         
@@ -64,10 +66,46 @@ class GameServer
 
                         }
                         break;
-                   
-                    
+                    // New case for creating a room.
+                    case PlayEvents.CREATE_ROOM:
+                        {
+                            
+                            string category = processedEvent.Data;
+
+                            if (clients.ContainsKey(ClientConnection))
+                            {
+                                int hostId = clients[ClientConnection].ID;
+                                Room newRoom = new Room(hostId, category);
+
+                                lock (lockObj)
+                                {
+                                    rooms.Add(newRoom);
+                                    clients[ClientConnection].RoomID = newRoom.roomID;
+                                }
+
+                                Console.WriteLine($"Room {newRoom.roomID} created by {clients[ClientConnection].Name} " +
+                                                  $"with category '{category}' and random word '{newRoom.RandomWord}'.");
+
+                                WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.ROOM_CREATED, newRoom.ToString()));
+
+                                lock (lockObj)
+                                {
+                                    rooms.Add(newRoom);
+                                    clients[ClientConnection].RoomID = newRoom.roomID;
+                                }
+
+                                Console.WriteLine($"Room {newRoom.roomID} created by {clients[ClientConnection].Name} " +
+                                                  $"with category '{category}' and random word '{newRoom.RandomWord}'.");
+
+                                // Send all room data back to the client.
+                                WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.ROOM_CREATED, newRoom.ToString()));
+                            }
+                            break;
+                        }
+                        
+
                 }
-                }
+            }
 
         }
         catch
