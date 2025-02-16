@@ -1,10 +1,13 @@
-
 public enum PlayEvents
 {
-    PLAYER_ENTERED_LOBBY,
-    SEND_CATEGORY,
-    END
+    GET_CATEGORIES,
+    GET_QUESTIONS,
+    SEND_CATEGORIES,
+    CREATE_ROOM,
+    ROOM_CREATED,
+    END // The end event here is crucial to know when to stop reading from the stream. (Inspired By Waki-Taki)
 }
+
 
 public enum RoomState
 {

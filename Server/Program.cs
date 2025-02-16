@@ -4,10 +4,13 @@ using System.Reflection;
 using Server;
 class GameServer
 {
+    public static List<string> Categories = new List<string>();
+
     static Dictionary<TcpClient, Client> clients = new Dictionary<TcpClient, Client>();
     static object lockObj = new object();
-    static List<string> Categories = new List<string>();
     static int ClientsCount = 0;
+    static readonly List<Room> rooms = new List<Room>(); 
+    static readonly object roomsLock = new object();
     static void Main()
     {
         
@@ -52,20 +55,45 @@ class GameServer
                 ProcessedEvent processedEvent = EventProcessor.ProcessEvent(request);
                 switch (processedEvent.Event)
                 {
-                    case PlayEvents.PLAYER_ENTERED_LOBBY:
+                    case PlayEvents.GET_CATEGORIES:
                         Console.WriteLine($"{clients[ClientConnection].Name} requested categories.");
                         lock (lockObj)
                         {
                             foreach (string category in Categories)
                             {
-                                WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.SEND_CATEGORY, category)); 
+                                WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.SEND_CATEGORIES, category));
                             }
                             WriteToClient.Write(EventProcessor.EventAsSting(PlayEvents.END));
 
                         }
                         break;
-                   
-                    
+                    case PlayEvents.CREATE_ROOM:
+                        {
+
+                            string category = processedEvent.Data;
+                            Console.WriteLine(category);
+                            if (clients.ContainsKey(ClientConnection))
+                            {
+                                int hostId = clients[ClientConnection].ID;
+                                Room newRoom = new Room(hostId, category);
+
+                                lock (lockObj)
+                                {
+                                    rooms.Add(newRoom);
+                                    clients[ClientConnection].RoomID = newRoom.roomID;
+                                }
+
+                                Console.WriteLine($"Room {newRoom.roomID} created by {clients[ClientConnection].Name} " +
+                                                  $"with category '{category}' and random word '{newRoom.RandomWord}'.");
+
+                                WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.ROOM_CREATED, newRoom.roomID));
+
+                              
+                            }
+                            break;
+
+
+                        }
                 }
                 }
 
