@@ -6,7 +6,9 @@ public enum PlayEvents
     END,
     CREATE_ROOM,
     ROOM_CREATED,
-    ROOM_UPDATE
+    ROOM_UPDATE,
+    PLAYER_TURN,
+    UPDATE_GAME_STATE
 }
 
 public enum RoomState
