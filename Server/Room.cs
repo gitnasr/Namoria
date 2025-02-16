@@ -35,14 +35,15 @@ namespace Server
         }
         public Room(int host, string category)
         {
-            roomID = count++;
+            roomID = GetNextRoomId();
             Host = host;
             RandomWord = GenerateRandomWord(category);
+            ReveledLetters = new char[RandomWord.Length];
+
             for (int i = 0; i < ReveledLetters.Length; i++)
             {
                 ReveledLetters[i] = '_';
             }
-            ReveledLetters = new char[RandomWord.Length];
             Player2 = null;
             Watchers = new List<int>();
             RoomState = RoomState.PENDING;
@@ -60,7 +61,10 @@ namespace Server
                throw new Exception("Category file is empty.");
             }
 
+
             int index = random.Next(words.Length);
+            Console.WriteLine(index);
+            Console.WriteLine(words[index]);
             return words[index];
         }
 
