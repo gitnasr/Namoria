@@ -76,7 +76,8 @@ class GameServer
                             {
                                 int hostId = clients[ClientConnection].ID;
                                 Room newRoom = new Room(hostId, category);
-
+                                Console.WriteLine(newRoom.roomID);
+                                Console.WriteLine(newRoom.RandomWord);
                                 lock (lockObj)
                                 {
                                     rooms.Add(newRoom);

@@ -28,12 +28,55 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Game";
+            panel1 = new Panel();
+            panel2 = new Panel();
+            label1 = new Label();
+            panel1.SuspendLayout();
+            SuspendLayout();
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(panel2);
+            panel1.Location = new Point(114, 25);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(656, 98);
+            panel1.TabIndex = 0;
+            // 
+            // panel2
+            // 
+            panel2.Location = new Point(32, 185);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(747, 210);
+            panel2.TabIndex = 1;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(76, 173);
+            label1.Name = "label1";
+            label1.Size = new Size(59, 25);
+            label1.TabIndex = 1;
+            label1.Text = "label1";
+            // 
+            // Game
+            // 
+            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 450);
+            Controls.Add(label1);
+            Controls.Add(panel1);
+            Name = "Game";
+            Text = "Game";
+            Load += Game_Load;
+            panel1.ResumeLayout(false);
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private Panel panel1;
+        private Panel panel2;
+        private Label label1;
     }
 }

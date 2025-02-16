@@ -112,7 +112,15 @@ namespace Client
             ProcessedEvent processed = EventProcessor.ProcessEvent(response);
             if (processed.Event == PlayEvents.ROOM_CREATED)
             {
-                MessageBox.Show($"Room Created Successfully  with id {processed.Data}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                bool isParsed = int.TryParse(processed.Data, out int roomID);
+                if (!isParsed)
+                {
+                    MessageBox.Show("Error creating room", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                Form form = new Game(roomID);
+                form.Show();
+                this.Close();
             }
             else
             {
