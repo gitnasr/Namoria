@@ -1,0 +1,125 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Client
+{
+    public partial class CreateRoom : Form
+    {
+        private string SelectedCategory;
+        private Form parentForm;
+        public CreateRoom(Form ParentForm)
+        {
+            parentForm = ParentForm;
+
+            InitializeComponent();
+        }
+
+        private async void GetAllCategories()
+        {
+            try
+            {
+                await Task.Run(() =>
+                {
+
+                    Connection.SendToServer(PlayEvents.GET_CATEGORIES);
+                    List<string> categories = new List<string>();
+                    while (true)
+                    {
+                        string response = Connection.ReadFromServer.ReadString();
+
+                        ProcessedEvent eventResult = EventProcessor.ProcessEvent(response);
+
+                        switch (eventResult.Event)
+                        {
+
+                            case PlayEvents.SEND_CATEGORIES:
+                                categories.Add(eventResult.Data);
+                                break;
+
+
+
+
+                        }
+
+                        if (eventResult.Event == PlayEvents.END)
+                        {
+                            break;
+                        }
+
+
+                    }
+
+
+
+
+
+                    // Once received, update the GUI on the main thread.
+                    this.Invoke(new Action(() =>
+                    {
+                        DisplayCategories(categories);
+                    }));
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error sending message: " + ex.Message);
+            }
+        }
+
+        private void DisplayCategories(List<string> categories)
+        {
+            int i = 0;
+            foreach (var category in categories)
+            {
+                RadioButton radioButton = new RadioButton();
+                radioButton.Text = category;
+                radioButton.Click += RadioButton_Click;
+                radioButton.AutoSize = true;
+                radioButton.ForeColor = Color.White;
+                CategoriesTable.SetColumn(radioButton, i);
+                CategoriesTable.Controls.Add(radioButton);
+
+                i++;
+
+            }
+
+        }
+
+        private void RadioButton_Click(object sender, EventArgs e)
+        {
+            RadioButton radioButton = (RadioButton)sender;
+            SelectedCategory = radioButton.Text;
+        }
+
+
+
+
+        private void CreateRoom_Load(object sender, EventArgs e)
+        {
+            GetAllCategories();
+        }
+
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            if (SelectedCategory == null)
+            {
+                MessageBox.Show("How we will start a game for you without a chosen catgorey ?", "Are you serious ?", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+        }
+
+        private void BackButton_Click(object sender, EventArgs e)
+        {
+            this.parentForm.Show();
+            this.Close();
+        }
+    }
+}
