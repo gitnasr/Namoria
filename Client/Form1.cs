@@ -115,14 +115,6 @@ namespace Client
 
                 yPosition += spacing; // 3shan yeego t7t b3d
             }
-            Label label = new Label
-            {
-                Text = $"Your ID is {this.ClientID}",
-                Location = new Point(xPosition + 50, yPosition + 50),
-                AutoSize = true,
-                Font = new Font("Arial", 10)
-            };
-            this.Controls.Add(label);
         }
 
      
