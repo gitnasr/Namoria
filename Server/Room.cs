@@ -23,7 +23,8 @@ namespace Server
         public string RandomWord { get; private set; }
         public List<int> Watchers { get; private set; }
         public RoomState RoomState { get; set; }
-        public int? CurrentMove { get; set; }
+        public int? CurrentTurn { get; set; }
+        public char[] ReveledLetters { get; private set; }
 
         private static int GetNextRoomId()
         {
@@ -34,13 +35,18 @@ namespace Server
         }
         public Room(int host, string category)
         {
-            roomID = GetNextRoomId();
+            roomID = count++;
             Host = host;
             RandomWord = GenerateRandomWord(category);
+            for (int i = 0; i < ReveledLetters.Length; i++)
+            {
+                ReveledLetters[i] = '_';
+            }
+            ReveledLetters = new char[RandomWord.Length];
             Player2 = null;
             Watchers = new List<int>();
             RoomState = RoomState.PENDING;
-            CurrentMove = null;
+            CurrentTurn = host;
         }
 
         private string GenerateRandomWord(string category)
@@ -57,7 +63,43 @@ namespace Server
             int index = random.Next(words.Length);
             return words[index];
         }
-      
-      
+
+        public bool ProcessTurn(char guessedLetter, int playerID, out bool isCorrectGuess)
+        {
+            isCorrectGuess = false;
+            if (playerID != CurrentTurn)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < RandomWord.Length; i++)
+            {
+                if (RandomWord[i] == guessedLetter)
+                {
+                    ReveledLetters[i] = RandomWord[i];
+                    isCorrectGuess |= true;
+                }
+            }
+            return true;
+        }
+        public bool isWordRevealed()
+        {
+            foreach (char c in ReveledLetters)
+            {
+                if (c == '_')
+                    return false;
+            }
+            return true;
+        }
+        public void switchTurn()
+        {
+            if (Player2.HasValue)
+            {
+                if (CurrentTurn == Player2)
+                    CurrentTurn = Host;
+                else
+                    CurrentTurn = Player2;
+            }
+        }
     }
 }
