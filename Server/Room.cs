@@ -21,9 +21,10 @@ namespace Server
         public int Host { get; private set; }
         public int? Player2 { get; set; }
         public string RandomWord { get; private set; }
+        public char[] revealedLetters { get; private set; }
         public List<int> Watchers { get; private set; }
         public RoomState RoomState { get; set; }
-        public int? CurrentMove { get; set; }
+        public int? CurrentTurn { get; set; }
 
         // Constructor now takes a category instead of a random word.
         public Room(int host, string category)
@@ -31,10 +32,15 @@ namespace Server
             roomID = count++;
             Host = host;
             RandomWord = GenerateRandomWord(category);
+            for (int i = 0; i < revealedLetters.Length; i++)
+            {
+                revealedLetters[i] = '_';
+            }
+            revealedLetters = new char[RandomWord.Length];
             Player2 = null;
             Watchers = new List<int>();
             RoomState = RoomState.PENDING;
-            CurrentMove = null;
+            CurrentTurn = host;
         }
 
         private string GenerateRandomWord(string category)
@@ -62,6 +68,47 @@ namespace Server
             int index = random.Next(words.Length);
             return words[index];
         }
+
+        public bool ProcessTurn(char guessedLetter, int playerID, out bool isCorrectGuess)
+        {
+            isCorrectGuess = false;
+            if(playerID != CurrentTurn)
+            {
+                return false;
+            }
+            
+            for(int i = 0; i < RandomWord.Length; i++)
+            {
+                if(RandomWord[i] == guessedLetter)
+                {
+                    revealedLetters[i] = RandomWord[i];
+                    isCorrectGuess |= true;
+                } 
+            } 
+            return true;
+        }
+
+        public bool isWordRevealed()
+        {
+            foreach(char c in revealedLetters)
+            {
+                if (c == '_')
+                    return false;
+            }
+            return true;
+        }
+
+        public void switchTurn()
+        {
+            if(Player2.HasValue)
+            {
+                if(CurrentTurn == Player2)
+                    CurrentTurn = Host;
+                else
+                    CurrentTurn = Player2;
+            }
+        }
+
         // Override ToString to return all room details.
         public override string ToString()
         {
@@ -72,7 +119,7 @@ namespace Server
             sb.AppendLine($"Room State: {RoomState}");
             sb.AppendLine($"Player2: {(Player2.HasValue ? Player2.Value.ToString() : "None")}");
             sb.AppendLine($"Watchers: {(Watchers.Count > 0 ? string.Join(", ", Watchers) : "None")}");
-            sb.AppendLine($"Current Move: {(CurrentMove.HasValue ? CurrentMove.Value.ToString() : "None")}");
+           // sb.AppendLine($"Current Move: {(CurrentMove.HasValue ? CurrentMove.Value.ToString() : "None")}");
             return sb.ToString();
         }
     }
