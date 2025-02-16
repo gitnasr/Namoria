@@ -28,7 +28,13 @@ namespace Client
             }
             catch (Exception ex)
             {
-                throw ;
+                if (ex is SocketException)
+                {
+                   MessageBox.Show("Server is not running");
+                    return;
+                }
+                else
+                    throw ;
             }
         }
         public static void SendToServer(PlayEvents playEvent, object data = null)

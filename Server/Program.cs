@@ -52,13 +52,13 @@ class GameServer
                 ProcessedEvent processedEvent = EventProcessor.ProcessEvent(request);
                 switch (processedEvent.Event)
                 {
-                    case PlayEvents.PLAYER_ENTERED_LOBBY:
+                    case PlayEvents.GET_CATEGORIES:
                         Console.WriteLine($"{clients[ClientConnection].Name} requested categories.");
                         lock (lockObj)
                         {
                             foreach (string category in Categories)
                             {
-                                WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.SEND_CATEGORY, category)); 
+                                WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.SEND_CATEGORIES, category)); 
                             }
                             WriteToClient.Write(EventProcessor.EventAsSting(PlayEvents.END));
 
