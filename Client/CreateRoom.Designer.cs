@@ -90,7 +90,7 @@
             CreateRoomButton.TabIndex = 6;
             CreateRoomButton.Text = "Let's Get this party started!";
             CreateRoomButton.UseVisualStyleBackColor = false;
-            CreateRoomButton.Click += button1_Click_1;
+            CreateRoomButton.Click += button1_Click_1Async;
             // 
             // tableLayoutPanel2
             // 
@@ -116,7 +116,7 @@
             Controls.Add(tableLayoutPanel2);
             Controls.Add(CategoriesTable);
             Controls.Add(label1);
-            FormBorderStyle = FormBorderStyle.None;
+            FormBorderStyle = FormBorderStyle.SizableToolWindow;
             Name = "CreateRoom";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Create Room";

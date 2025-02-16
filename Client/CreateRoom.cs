@@ -43,9 +43,6 @@ namespace Client
                                 categories.Add(eventResult.Data);
                                 break;
 
-
-
-
                         }
 
                         if (eventResult.Event == PlayEvents.END)
@@ -56,11 +53,6 @@ namespace Client
 
                     }
 
-
-
-
-
-                    // Once received, update the GUI on the main thread.
                     this.Invoke(new Action(() =>
                     {
                         DisplayCategories(categories);
@@ -107,12 +99,24 @@ namespace Client
         }
 
 
-        private void button1_Click_1(object sender, EventArgs e)
+        private async void button1_Click_1Async(object sender, EventArgs e)
         {
             if (SelectedCategory == null)
             {
-                MessageBox.Show("How we will start a game for you without a chosen catgorey ?", "Are you serious ?", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("How we will start a game for you without a chosen category ?", "Are you serious ?", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
+            }
+            Connection.SendToServer(PlayEvents.CREATE_ROOM, SelectedCategory);
+
+            string response = await Task.Run(() => Connection.ReadFromServer.ReadString());
+            ProcessedEvent processed = EventProcessor.ProcessEvent(response);
+            if (processed.Event == PlayEvents.ROOM_CREATED)
+            {
+                MessageBox.Show($"Room Created Successfully  with id {processed.Data}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show("Error creating room", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

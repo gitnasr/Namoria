@@ -117,11 +117,11 @@
             Controls.Add(flowLayoutPanel2);
             Controls.Add(flowLayoutPanel1);
             ForeColor = Color.White;
-            FormBorderStyle = FormBorderStyle.None;
+            FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Margin = new Padding(4);
             Name = "Lobby";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Form1";
+            Text = "Namoria | Lobby";
             Load += Form1_Load;
             flowLayoutPanel1.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
