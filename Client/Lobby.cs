@@ -66,7 +66,7 @@ namespace Client
 
             foreach (var room in rooms)
             {
-                RoomCard card = new RoomCard(room.ID, room.Name, room.Status, panel.Width  - 30);
+                RoomCard card = new RoomCard(room.ID, room.Name, room.Status, panel.Width - 30);
                 card.JoinClicked += (s, id) => MessageBox.Show($"Joining Room {id}");
                 card.WatchClicked += (s, id) => MessageBox.Show($"Watching Room {id}");
 
@@ -96,6 +96,12 @@ namespace Client
 
         private void flowLayoutPanel2_Paint(object sender, PaintEventArgs e)
         {
+
+        }
+
+        private void Lobby_Leave(object sender, EventArgs e)
+        {
+            Application.Exit();
 
         }
     }

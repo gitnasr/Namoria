@@ -67,7 +67,9 @@
             Controls.Add(panel1);
             Name = "Game";
             Text = "Game";
+            FormClosing += Game_FormClosing;
             Load += Game_Load;
+            Leave += Game_Leave;
             panel1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
