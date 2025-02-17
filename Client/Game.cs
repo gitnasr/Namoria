@@ -12,7 +12,7 @@ namespace Client
 {
     public partial class Game : Form
     {
-     
+
         private string TheWord = "apple";
         private List<char> charList;
         private List<Label> dashLabels = new List<Label>();
@@ -120,10 +120,21 @@ namespace Client
             return true; // All letters are revealed
         }
 
-    
+
 
         private void Game_Load(object sender, EventArgs e)
         {
+
+        }
+
+        private void Game_Leave(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void Game_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Application.Exit();
 
         }
     }

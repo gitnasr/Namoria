@@ -120,6 +120,7 @@
             Name = "CreateRoom";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Create Room";
+            FormClosed += CreateRoom_FormClosed;
             Load += CreateRoom_Load;
             tableLayoutPanel2.ResumeLayout(false);
             ResumeLayout(false);
