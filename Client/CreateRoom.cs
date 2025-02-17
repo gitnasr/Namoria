@@ -118,7 +118,7 @@ namespace Client
                     MessageBox.Show("Error creating room", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-                Form form = new Game(roomID);
+                Form form = new GameRoom(roomID);
                 form.Show();
                 this.Close();
             }

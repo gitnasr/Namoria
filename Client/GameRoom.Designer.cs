@@ -1,6 +1,6 @@
 ﻿namespace Client
 {
-    partial class Game
+    partial class GameRoom
     {
         /// <summary>
         /// Required designer variable.
@@ -31,44 +31,42 @@
             panel1 = new Panel();
             panel2 = new Panel();
             label1 = new Label();
-            panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
-            panel1.Controls.Add(panel2);
-            panel1.Location = new Point(114, 25);
+            panel1.Location = new Point(66, 193);
             panel1.Name = "panel1";
-            panel1.Size = new Size(656, 98);
+            panel1.Size = new Size(568, 52);
             panel1.TabIndex = 0;
             // 
             // panel2
             // 
-            panel2.Location = new Point(32, 185);
+            panel2.Location = new Point(284, 290);
             panel2.Name = "panel2";
-            panel2.Size = new Size(747, 210);
+            panel2.Size = new Size(350, 130);
             panel2.TabIndex = 1;
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(76, 173);
+            label1.Location = new Point(284, 34);
+            label1.Margin = new Padding(2, 0, 2, 0);
             label1.Name = "label1";
-            label1.Size = new Size(59, 25);
-            label1.TabIndex = 1;
+            label1.Size = new Size(50, 20);
+            label1.TabIndex = 2;
             label1.Text = "label1";
             // 
-            // Game
+            // GameRoom
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
             Controls.Add(label1);
+            Controls.Add(panel2);
             Controls.Add(panel1);
-            Name = "Game";
-            Text = "Game";
-            Load += Game_Load;
-            panel1.ResumeLayout(false);
+            Name = "GameRoom";
+            Text = "GameRoom";
             ResumeLayout(false);
             PerformLayout();
         }

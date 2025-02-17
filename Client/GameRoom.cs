@@ -10,19 +10,18 @@ using System.Windows.Forms;
 
 namespace Client
 {
-    public partial class Game : Form
+    public partial class GameRoom : Form
     {
-     
         private string TheWord = "apple";
         private List<char> charList;
         private List<Label> dashLabels = new List<Label>();
-        public Game(int roomID)
+        public GameRoom(int roomID)
         {
             InitializeComponent();
+            label1.Text = $"Room ID: {roomID} Hello YAYYYYYYYYYYYYYYYYY!";
             charList = new List<char>(TheWord.ToCharArray());
             CreateAlphabetButtons();
             DisplayDashes();
-            label1.Text = $"Room ID: {roomID} Hello YAYYYYYYYYYYYYYYYYY!";
         }
 
 
@@ -120,9 +119,7 @@ namespace Client
             return true; // All letters are revealed
         }
 
-    
-
-        private void Game_Load(object sender, EventArgs e)
+        private void Form1_Load(object sender, EventArgs e)
         {
 
         }
