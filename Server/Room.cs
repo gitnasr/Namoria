@@ -14,36 +14,29 @@ namespace Server
 
     class Room
     {
-        private static int count;
+        private static int count = 0;
         private static Random random = new Random();
-        private static readonly object countLock = new object();
+
         public int roomID { get; private set; }
         public int Host { get; private set; }
         public int? Player2 { get; set; }
         public string RandomWord { get; private set; }
+        public char[] revealedLetters { get; private set; }
         public List<int> Watchers { get; private set; }
         public RoomState RoomState { get; set; }
         public int? CurrentTurn { get; set; }
-        public char[] ReveledLetters { get; private set; }
 
-        private static int GetNextRoomId()
-        {
-            lock (countLock)
-            {
-                return count++;
-            }
-        }
+        // Constructor now takes a category instead of a random word.
         public Room(int host, string category)
         {
-            roomID = GetNextRoomId();
+            roomID = count++;
             Host = host;
             RandomWord = GenerateRandomWord(category);
-            ReveledLetters = new char[RandomWord.Length];
-
-            for (int i = 0; i < ReveledLetters.Length; i++)
+            for (int i = 0; i < revealedLetters.Length; i++)
             {
-                ReveledLetters[i] = '_';
+                revealedLetters[i] = '_';
             }
+            revealedLetters = new char[RandomWord.Length];
             Player2 = null;
             Watchers = new List<int>();
             RoomState = RoomState.PENDING;
@@ -52,19 +45,27 @@ namespace Server
 
         private string GenerateRandomWord(string category)
         {
-            List<string> categories = new List<string>();
-            string filePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Categories", category + ".txt");
+            string exePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            if (string.IsNullOrEmpty(exePath))
+            {
+                return "default";
+            }
+
+            string filePath = Path.Combine(exePath, "Categories", category + ".txt");
+
+            if (!File.Exists(filePath))
+            {
+                return "default";
+            }
+
             string[] words = File.ReadAllLines(filePath);
 
             if (words.Length == 0)
             {
-               throw new Exception("Category file is empty.");
+                return "default";
             }
 
-
             int index = random.Next(words.Length);
-            Console.WriteLine(index);
-            Console.WriteLine(words[index]);
             return words[index];
         }
 
@@ -80,21 +81,23 @@ namespace Server
             {
                 if (RandomWord[i] == guessedLetter)
                 {
-                    ReveledLetters[i] = RandomWord[i];
-                    isCorrectGuess |= true;
+                    revealedLetters[i] = RandomWord[i];
+                    isCorrectGuess = true;
                 }
             }
             return true;
         }
+
         public bool isWordRevealed()
         {
-            foreach (char c in ReveledLetters)
+            foreach (char c in revealedLetters)
             {
                 if (c == '_')
                     return false;
             }
             return true;
         }
+
         public void switchTurn()
         {
             if (Player2.HasValue)

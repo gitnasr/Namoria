@@ -5,6 +5,9 @@ public enum PlayEvents
     SEND_CATEGORIES,
     CREATE_ROOM,
     ROOM_CREATED,
+    ROOM_UPDATE,
+    PLAYER_TURN,
+    UPDATE_GAME_STATE,
     END // The end event here is crucial to know when to stop reading from the stream. (Inspired By Waki-Taki)
 }
 

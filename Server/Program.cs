@@ -92,11 +92,63 @@ class GameServer
                               
                             }
                             break;
-
-
                         }
+                    case PlayEvents.PLAYER_TURN:
+
+                        // Expected format for Data: "roomID,guessedLetter"
+                        string[] moveParts = processedEvent.Data.Split(',');
+                        if (moveParts.Length < 2)
+                        {
+                            WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.ROOM_UPDATE, "Invalid turn format."));
+                            break;
+                        }
+
+                        if (!int.TryParse(moveParts[0], out int roomId))
+                        {
+                            WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.ROOM_UPDATE, "Invalid room ID."));
+                            break;
+                        }
+                        char guessedLetter = moveParts[1][0];
+
+                        // Look up the room by its ID.
+                        Room room = null;
+                        for (int i = 0; i < rooms.Count; i++)
+                        {
+                            if (rooms[i].roomID == roomId)
+                            {
+                                room = rooms[i];
+                                break;
+                            }
+                        }
+                        if (room == null)
+                        {
+                            WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.ROOM_UPDATE, "Room NOT FOUND."));
+                            break;
+                        }
+
+                        // Process the current turn using the room's ProcessTurn method
+                        bool validMove = room.ProcessTurn(guessedLetter, clients[ClientConnection].ID, out bool revealedLetter);
+                        if (!validMove)
+                        {
+                            WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.ROOM_UPDATE, "Not your turn."));
+                            break;
+                        }
+
+                        // Check if there is a winner
+                        if (room.isWordRevealed())
+                        {
+                            //
+                        }
+                        else
+                        {  // Toggle Turns
+                            room.switchTurn();
+                            string revealedLetterAsString = new string(room.revealedLetters);
+                            string updateStateMsg = EventProcessor.SendEventWithData(PlayEvents.UPDATE_GAME_STATE, $"{revealedLetterAsString}|{room.CurrentTurn}");
+                            BroadcastToRoom(room, updateStateMsg);
+                        }
+                        break;
                 }
-                }
+            }
 
         }
         catch
@@ -112,6 +164,30 @@ class GameServer
         {
             stream.Close();
             ClientConnection.Close();
+        }
+    }
+
+    static void BroadcastToRoom(Room room, string message)
+    {
+        lock (lockObj)
+        {
+            foreach (KeyValuePair<TcpClient, Client> dict in clients)
+            {
+                Client client = dict.Value;
+
+                if (client.RoomID == room.roomID)
+                {
+                    try
+                    {
+                        client.WriteToClient.Write(message);
+                        client.WriteToClient.Flush();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error broadcasting to client {client.ID}: {ex.Message}");
+                    }
+                }
+            }
         }
     }
 
