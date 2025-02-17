@@ -57,9 +57,9 @@
             CategoriesTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             CategoriesTable.Dock = DockStyle.Top;
             CategoriesTable.Location = new Point(0, 54);
-            CategoriesTable.Margin = new Padding(2, 2, 2, 2);
+            CategoriesTable.Margin = new Padding(2);
             CategoriesTable.Name = "CategoriesTable";
-            CategoriesTable.Padding = new Padding(8, 8, 8, 8);
+            CategoriesTable.Padding = new Padding(8);
             CategoriesTable.RowCount = 2;
             CategoriesTable.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             CategoriesTable.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
@@ -73,7 +73,7 @@
             BackButton.FlatStyle = FlatStyle.Flat;
             BackButton.ForeColor = SystemColors.Control;
             BackButton.Location = new Point(223, 2);
-            BackButton.Margin = new Padding(2, 2, 2, 2);
+            BackButton.Margin = new Padding(2);
             BackButton.Name = "BackButton";
             BackButton.Size = new Size(217, 130);
             BackButton.TabIndex = 5;
@@ -88,7 +88,7 @@
             CreateRoomButton.FlatStyle = FlatStyle.Flat;
             CreateRoomButton.ForeColor = SystemColors.InactiveCaption;
             CreateRoomButton.Location = new Point(2, 2);
-            CreateRoomButton.Margin = new Padding(2, 2, 2, 2);
+            CreateRoomButton.Margin = new Padding(2);
             CreateRoomButton.Name = "CreateRoomButton";
             CreateRoomButton.Size = new Size(216, 130);
             CreateRoomButton.TabIndex = 6;
@@ -105,7 +105,7 @@
             tableLayoutPanel2.Controls.Add(BackButton, 1, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(0, 174);
-            tableLayoutPanel2.Margin = new Padding(2, 2, 2, 2);
+            tableLayoutPanel2.Margin = new Padding(2);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
@@ -122,7 +122,7 @@
             Controls.Add(CategoriesTable);
             Controls.Add(label1);
             FormBorderStyle = FormBorderStyle.SizableToolWindow;
-            Margin = new Padding(2, 2, 2, 2);
+            Margin = new Padding(2);
             Name = "CreateRoom";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Create Room";
