@@ -116,7 +116,6 @@ public class RoomCard : Panel
         JoinButton.Enabled = State == RoomState.WAITING;
     }
     
-    // أضف Enum لإدارة الحالات
     public enum RoomState
     {
         WAITING,
