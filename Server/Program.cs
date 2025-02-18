@@ -94,28 +94,7 @@ class GameServer
                                 }
                                 Console.WriteLine($"Room {newRoom.roomID} created by {clients[ClientConnection].Name} with category '{category}' and random word '{newRoom.RandomWord}'.");
                                 WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.ROOM_CREATED, newRoom.roomID));
-                                // **Broadcast the new room data to all connected clients:**
-                                string roomDetails = $"{newRoom.roomID}|{newRoom.Host}|{newRoom.RoomState}";
-                                //string formattedEvent = EventProcessor.SendEventWithData(PlayEvents.SEND_ROOM, roomDetails);
-                                //Brodcast(formattedEvent);
-                                string BrodcastToAll = EventProcessor.EventAsSting(PlayEvents.ROOMS_UPDATE);
-                                Brodcast(BrodcastToAll);
-                                //foreach (TcpClient clientt in clients.Keys)
-                                //{
-                                //    try
-                                //    {
-                                //        BinaryWriter writer = new BinaryWriter(clientt.GetStream());
-                                //        writer.Write(formattedEvent);
-                                //        writer.Flush();
-                                //        Console.WriteLine($"Broadcast sent: {formattedEvent}");
-                                //    }
-                                //    catch (Exception ex)
-                                //    {
-                                //        Console.WriteLine("Broadcast error: " + ex.Message);
-                                //    }
-                                //}
-
-
+                                
                                 // Improve this to go though all client in the lobby: Clients in the lobby where they have not joined a room, not in a room list.
                             }
 

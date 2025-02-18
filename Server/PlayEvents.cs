@@ -6,7 +6,6 @@
     ROOM_CREATED,
     GET_ROOMS,
     SEND_ROOM,
-    ROOMS_UPDATE,
     END
 
 }

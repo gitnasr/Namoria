@@ -31,20 +31,18 @@
             panel1 = new Panel();
             panel2 = new Panel();
             label1 = new Label();
-            panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
-            panel1.Controls.Add(panel2);
-            panel1.Location = new Point(114, 25);
+            panel1.Location = new Point(55, 12);
             panel1.Name = "panel1";
             panel1.Size = new Size(656, 98);
             panel1.TabIndex = 0;
             // 
             // panel2
             // 
-            panel2.Location = new Point(32, 185);
+            panel2.Location = new Point(41, 214);
             panel2.Name = "panel2";
             panel2.Size = new Size(747, 210);
             panel2.TabIndex = 1;
@@ -63,6 +61,7 @@
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(panel2);
             Controls.Add(label1);
             Controls.Add(panel1);
             Name = "Game";
@@ -70,7 +69,6 @@
             FormClosing += Game_FormClosing;
             Load += Game_Load;
             Leave += Game_Leave;
-            panel1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
