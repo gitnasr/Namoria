@@ -28,6 +28,17 @@ class GameServer
         }
     }
 
+    static void Brodcast(string message)
+    {
+        Console.WriteLine(message);
+        foreach (TcpClient client in clients.Keys)
+        {
+            BinaryWriter writer = new BinaryWriter(client.GetStream());
+            writer.Write(message);
+            writer.Flush();
+        }
+    }
+
     static void HandleClient(TcpClient ClientConnection)
     {
         NetworkStream stream = ClientConnection.GetStream();
@@ -52,6 +63,7 @@ class GameServer
             {
                 string request = reader.ReadString();
                 ProcessedEvent processedEvent = EventProcessor.ProcessEvent(request);
+                Console.WriteLine(processedEvent);
                 switch (processedEvent.Event)
                 {
                     case PlayEvents.GET_CATEGORIES:
@@ -84,24 +96,27 @@ class GameServer
                                 WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.ROOM_CREATED, newRoom.roomID));
                                 // **Broadcast the new room data to all connected clients:**
                                 string roomDetails = $"{newRoom.roomID}|{newRoom.Host}|{newRoom.RoomState}";
-                                string formattedEvent = EventProcessor.SendEventWithData(PlayEvents.SEND_ROOM, roomDetails);
-                                lock (lockObj)
-                                {
-                                    foreach (TcpClient clientt in clients.Keys)
-                                    {
-                                        try
-                                        {
-                                            BinaryWriter writer = new BinaryWriter(clientt.GetStream());
-                                            writer.Write(formattedEvent);
-                                            writer.Flush();
-                                            Console.WriteLine($"Broadcast sent: {formattedEvent}");
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            Console.WriteLine("Broadcast error: " + ex.Message);
-                                        }
-                                    }
-                                }
+                                //string formattedEvent = EventProcessor.SendEventWithData(PlayEvents.SEND_ROOM, roomDetails);
+                                //Brodcast(formattedEvent);
+                                string BrodcastToAll = EventProcessor.EventAsSting(PlayEvents.ROOMS_UPDATE);
+                                Brodcast(BrodcastToAll);
+                                //foreach (TcpClient clientt in clients.Keys)
+                                //{
+                                //    try
+                                //    {
+                                //        BinaryWriter writer = new BinaryWriter(clientt.GetStream());
+                                //        writer.Write(formattedEvent);
+                                //        writer.Flush();
+                                //        Console.WriteLine($"Broadcast sent: {formattedEvent}");
+                                //    }
+                                //    catch (Exception ex)
+                                //    {
+                                //        Console.WriteLine("Broadcast error: " + ex.Message);
+                                //    }
+                                //}
+
+
+                                // Improve this to go though all client in the lobby: Clients in the lobby where they have not joined a room, not in a room list.
                             }
 
                         }
@@ -109,14 +124,14 @@ class GameServer
 
                     case PlayEvents.GET_ROOMS:
                         Console.WriteLine($"{clients[ClientConnection].Name} requested rooms list.");
-                        lock (roomsLock)
-                        {
+                     
                             try
                             {
                                 foreach (Room room in rooms)
                                 {
                                    
                                     string roomDetails = $"{room.roomID}|{room.Host}|{room.RoomState}";
+                                    Console.WriteLine(roomDetails);
                                     string formattedEvent = EventProcessor.SendEventWithData(PlayEvents.SEND_ROOM, roomDetails);
                                     WriteToClient.Write(formattedEvent);
                                     WriteToClient.Flush();
@@ -130,7 +145,7 @@ class GameServer
                             {
                                 Console.WriteLine($"Error sending rooms: {ex.Message}");
                             }
-                        }
+                      
                         break;
                 }
             }

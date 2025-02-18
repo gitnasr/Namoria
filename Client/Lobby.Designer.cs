@@ -28,12 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             flowLayoutPanel1 = new FlowLayoutPanel();
             groupBox1 = new GroupBox();
             CreateRoomButton = new Button();
             groupBox2 = new GroupBox();
             ExitButton = new Button();
             flowLayoutPanel2 = new FlowLayoutPanel();
+            timer1 = new System.Windows.Forms.Timer(components);
             flowLayoutPanel1.SuspendLayout();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -108,6 +110,11 @@
             flowLayoutPanel2.WrapContents = false;
             flowLayoutPanel2.Paint += flowLayoutPanel2_Paint;
             // 
+            // timer1
+            // 
+            timer1.Interval = 1000;
+            timer1.Tick += timer1_Tick;
+            // 
             // Lobby
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
@@ -123,6 +130,7 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Namoria | Lobby";
             Load += Form1_Load;
+            VisibleChanged += Lobby_VisibleChanged;
             Leave += Lobby_Leave;
             flowLayoutPanel1.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
@@ -138,5 +146,6 @@
         private GroupBox groupBox2;
         private Button ExitButton;
         private FlowLayoutPanel flowLayoutPanel2;
+        private System.Windows.Forms.Timer timer1;
     }
 }

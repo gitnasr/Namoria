@@ -6,6 +6,7 @@
     ROOM_CREATED,
     GET_ROOMS,
     SEND_ROOM,
+    ROOMS_UPDATE,
     END
 
 }
@@ -62,7 +63,7 @@ public static class EventProcessor
 
     //public static ProcessedEvent ProcessEvent(string request)
     //{
-        
+    //    Console.WriteLine(request);
     //    if (request.Contains('|'))
     //    {
     //        string[] split = request.Split('|');
@@ -86,5 +87,5 @@ public static class EventProcessor
     //    }
     //}
 
-    
+
 }

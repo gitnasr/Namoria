@@ -29,7 +29,7 @@ public class RoomCard : Panel
             UpdateJoinButtonState();
         }
     }
-    public RoomCard(int id, string name, string status, int ParentWidth)
+    public RoomCard(int id, string name, string status, int ParentWidth )
     {
         this.RoomID = id;
         this.BackColor = Colors.GetColor(DefinedColors.primary);
@@ -37,7 +37,7 @@ public class RoomCard : Panel
         this.Padding = new Padding(15);
         this.Margin = new Padding(10);
         this.Height = 100;
-        this.Width = ParentWidth - 20;
+        this.Width = ParentWidth -  20;
 
          RoomLabelID = new Label
         {

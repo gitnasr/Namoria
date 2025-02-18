@@ -14,7 +14,7 @@ namespace Server
 
     class Room
     {
-        private static int count =50;
+        private static int count =0;
         private static Random random = new Random();
         private static readonly object countLock = new object();
         public int roomID { get; private set; }
@@ -30,7 +30,7 @@ namespace Server
         {
             lock (countLock)
             {
-                return count++;
+                return ++count;
             }
         }
         public Room(int host, string category)

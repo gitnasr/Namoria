@@ -11,9 +11,10 @@ namespace Client
     {
         private static NetworkStream StreamFromNetwork;
         private static TcpClient client =  new TcpClient("127.0.0.1", 5000);
-        public static BinaryReader ReadFromServer { get; set; }
+        public static BinaryReader ReadFromServer;
         static BinaryWriter WriteToServer;
-      public void ConnectToServer(string username)
+
+        public void ConnectToServer(string username)
         {
             try
             {
