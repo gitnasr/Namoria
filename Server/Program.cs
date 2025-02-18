@@ -82,7 +82,28 @@ class GameServer
                                 }
                                 Console.WriteLine($"Room {newRoom.roomID} created by {clients[ClientConnection].Name} with category '{category}' and random word '{newRoom.RandomWord}'.");
                                 WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.ROOM_CREATED, newRoom.roomID));
+                                // **Broadcast the new room data to all connected clients:**
+                                string roomDetails = $"{newRoom.roomID}|{newRoom.Host}|{newRoom.RoomState}";
+                                string formattedEvent = EventProcessor.SendEventWithData(PlayEvents.SEND_ROOM, roomDetails);
+                                lock (lockObj)
+                                {
+                                    foreach (TcpClient clientt in clients.Keys)
+                                    {
+                                        try
+                                        {
+                                            BinaryWriter writer = new BinaryWriter(clientt.GetStream());
+                                            writer.Write(formattedEvent);
+                                            writer.Flush();
+                                            Console.WriteLine($"Broadcast sent: {formattedEvent}");
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Console.WriteLine("Broadcast error: " + ex.Message);
+                                        }
+                                    }
+                                }
                             }
+
                         }
                         break;
 
@@ -101,7 +122,7 @@ class GameServer
                                     WriteToClient.Flush();
                                     Console.WriteLine($"Sent: {formattedEvent}");
                                 }
-                                // Signal end of room list transmission
+                                
                                 WriteToClient.Write(EventProcessor.EventAsSting(PlayEvents.END));
                                 WriteToClient.Flush();
                             }

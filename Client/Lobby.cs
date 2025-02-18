@@ -127,7 +127,8 @@ namespace Client
                     switch (parsedEvent.Event)
                     {
                         case PlayEvents.SEND_ROOM:
-                            // Process and display each room received
+                            
+                            MessageBox.Show(parsedEvent.Data);
                             HandleRoomData(parsedEvent.Data, panel);
                             break;
 
@@ -148,8 +149,13 @@ namespace Client
         {
             try
             {
-                // Expected format: "ROOMID|ROOMHOST|ROOMSTATE"
-                string[] roomData = data.Split('|');
+                //MessageBox.Show("Raw data received: " + data);
+
+                // Split the data removing empty entries
+                string[] roomData = data.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+
+                // For debugging, join the parts into a single string to show what you received:
+                //MessageBox.Show("Split data: " + string.Join(", ", roomData));
                 if (roomData.Length == 3)
                 {
                     int roomId = int.Parse(roomData[0]);

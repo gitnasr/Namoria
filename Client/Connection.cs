@@ -40,7 +40,7 @@ namespace Client
         public static void SendToServer(PlayEvents playEvent, object data = null)
         {
             if (data == null)
-                WriteToServer.Write(EventProcessor.SendEventWithData(playEvent));
+                WriteToServer.Write(EventProcessor.EventAsSting(playEvent));
             else
                 WriteToServer.Write(EventProcessor.SendEventWithData(playEvent, data));
         }

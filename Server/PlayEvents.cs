@@ -29,7 +29,7 @@ public class ProcessedEvent
 }
 public static class EventProcessor
 {
-    public static string SendEventWithData(PlayEvents playEvent)
+    public static string EventAsSting(PlayEvents playEvent)
     {
         return playEvent.ToString();
     }
@@ -38,35 +38,53 @@ public static class EventProcessor
     {
         return $"{playEvent}|{data}";
     }
-
     public static ProcessedEvent ProcessEvent(string request)
     {
-        
-        if (request.Contains('|'))
+        // Split the request into exactly two parts: the event and the rest (data)
+        string[] parts = request.Split(new char[] { '|' }, 2);
+        if (parts.Length == 2)
         {
-            string[] split = request.Split('|');
-
-            string eventString = split[0];
-            string data = split[1];
-
             return new ProcessedEvent
             {
-                Event = (PlayEvents)Enum.Parse(typeof(PlayEvents), eventString),
-                Data = data
+                Event = Enum.Parse<PlayEvents>(parts[0], true),
+                Data = parts[1]
             };
         }
         else
         {
             return new ProcessedEvent
             {
-                Event = (PlayEvents)Enum.Parse(typeof(PlayEvents), request),
+                Event = Enum.Parse<PlayEvents>(request, true),
                 Data = ""
             };
         }
     }
 
-    internal static bool EventAsSting(PlayEvents eND)
-    {
-        throw new NotImplementedException();
-    }
+    //public static ProcessedEvent ProcessEvent(string request)
+    //{
+        
+    //    if (request.Contains('|'))
+    //    {
+    //        string[] split = request.Split('|');
+
+    //        string eventString = split[0];
+    //        string data = split[1];
+
+    //        return new ProcessedEvent
+    //        {
+    //            Event = (PlayEvents)Enum.Parse(typeof(PlayEvents), eventString),
+    //            Data = data
+    //        };
+    //    }
+    //    else
+    //    {
+    //        return new ProcessedEvent
+    //        {
+    //            Event = (PlayEvents)Enum.Parse(typeof(PlayEvents), request),
+    //            Data = ""
+    //        };
+    //    }
+    //}
+
+    
 }
