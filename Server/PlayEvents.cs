@@ -41,8 +41,8 @@ public static class EventProcessor
     }
     public static ProcessedEvent ProcessEvent(string request)
     {
-        // Split the request into exactly two parts: the event and the rest (data)
-        string[] parts = request.Split(new char[] { '|' }, 2);
+  
+        string[] parts = request.Split('|', 2);
         if (parts.Length == 2)
         {
             return new ProcessedEvent
@@ -61,31 +61,6 @@ public static class EventProcessor
         }
     }
 
-    //public static ProcessedEvent ProcessEvent(string request)
-    //{
-    //    Console.WriteLine(request);
-    //    if (request.Contains('|'))
-    //    {
-    //        string[] split = request.Split('|');
-
-    //        string eventString = split[0];
-    //        string data = split[1];
-
-    //        return new ProcessedEvent
-    //        {
-    //            Event = (PlayEvents)Enum.Parse(typeof(PlayEvents), eventString),
-    //            Data = data
-    //        };
-    //    }
-    //    else
-    //    {
-    //        return new ProcessedEvent
-    //        {
-    //            Event = (PlayEvents)Enum.Parse(typeof(PlayEvents), request),
-    //            Data = ""
-    //        };
-    //    }
-    //}
 
 
 }
