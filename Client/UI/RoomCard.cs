@@ -19,7 +19,16 @@ public class RoomCard : Panel
     public Label RoomStatus { get; private set; }
 
 
-
+    private RoomState _roomState;
+    public RoomState State
+    {
+        get => _roomState;
+        set
+        {
+            _roomState = value;
+            UpdateJoinButtonState();
+        }
+    }
     public RoomCard(int id, string name, string status, int ParentWidth)
     {
         this.RoomID = id;
@@ -95,5 +104,23 @@ public class RoomCard : Panel
         HostLabel.Location = new Point(10, 10);
         RoomStatus.Location = new Point(10, 40);
         buttonPanel.Location = new Point(10, 70);
+    }
+    private void UpdateJoinButtonState()
+    {
+        if (JoinButton.InvokeRequired)
+        {
+            JoinButton.Invoke(new Action(() => UpdateJoinButtonState()));
+            return;
+        }
+
+        JoinButton.Enabled = State == RoomState.WAITING;
+    }
+    
+    // أضف Enum لإدارة الحالات
+    public enum RoomState
+    {
+        WAITING,
+        PLAYING,
+        FULL
     }
 }

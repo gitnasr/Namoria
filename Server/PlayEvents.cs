@@ -1,11 +1,13 @@
-public enum PlayEvents
+﻿public enum PlayEvents
 {
     GET_CATEGORIES,
-    GET_QUESTIONS,
     SEND_CATEGORIES,
     CREATE_ROOM,
     ROOM_CREATED,
-    END // The end event here is crucial to know when to stop reading from the stream. (Inspired By Waki-Taki)
+    GET_ROOMS,
+    SEND_ROOM,
+    END
+
 }
 
 
@@ -27,7 +29,7 @@ public class ProcessedEvent
 }
 public static class EventProcessor
 {
-    public static string EventAsSting(PlayEvents playEvent)
+    public static string SendEventWithData(PlayEvents playEvent)
     {
         return playEvent.ToString();
     }
@@ -61,5 +63,10 @@ public static class EventProcessor
                 Data = ""
             };
         }
+    }
+
+    internal static bool EventAsSting(PlayEvents eND)
+    {
+        throw new NotImplementedException();
     }
 }
