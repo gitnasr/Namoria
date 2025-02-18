@@ -1,11 +1,13 @@
-public enum PlayEvents
+﻿public enum PlayEvents
 {
     GET_CATEGORIES,
-    GET_QUESTIONS,
     SEND_CATEGORIES,
     CREATE_ROOM,
     ROOM_CREATED,
-    END // The end event here is crucial to know when to stop reading from the stream. (Inspired By Waki-Taki)
+    GET_ROOMS,
+    SEND_ROOM,
+    END
+
 }
 
 
@@ -36,30 +38,53 @@ public static class EventProcessor
     {
         return $"{playEvent}|{data}";
     }
-
     public static ProcessedEvent ProcessEvent(string request)
     {
-        
-        if (request.Contains('|'))
+        // Split the request into exactly two parts: the event and the rest (data)
+        string[] parts = request.Split(new char[] { '|' }, 2);
+        if (parts.Length == 2)
         {
-            string[] split = request.Split('|');
-
-            string eventString = split[0];
-            string data = split[1];
-
             return new ProcessedEvent
             {
-                Event = (PlayEvents)Enum.Parse(typeof(PlayEvents), eventString),
-                Data = data
+                Event = Enum.Parse<PlayEvents>(parts[0], true),
+                Data = parts[1]
             };
         }
         else
         {
             return new ProcessedEvent
             {
-                Event = (PlayEvents)Enum.Parse(typeof(PlayEvents), request),
+                Event = Enum.Parse<PlayEvents>(request, true),
                 Data = ""
             };
         }
     }
+
+    //public static ProcessedEvent ProcessEvent(string request)
+    //{
+        
+    //    if (request.Contains('|'))
+    //    {
+    //        string[] split = request.Split('|');
+
+    //        string eventString = split[0];
+    //        string data = split[1];
+
+    //        return new ProcessedEvent
+    //        {
+    //            Event = (PlayEvents)Enum.Parse(typeof(PlayEvents), eventString),
+    //            Data = data
+    //        };
+    //    }
+    //    else
+    //    {
+    //        return new ProcessedEvent
+    //        {
+    //            Event = (PlayEvents)Enum.Parse(typeof(PlayEvents), request),
+    //            Data = ""
+    //        };
+    //    }
+    //}
+
+    
 }

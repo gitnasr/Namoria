@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using System.Reflection;
 using Server;
+
 class GameServer
 {
     public static List<string> Categories = new List<string>();
@@ -9,11 +10,11 @@ class GameServer
     static Dictionary<TcpClient, Client> clients = new Dictionary<TcpClient, Client>();
     static object lockObj = new object();
     static int ClientsCount = 0;
-    static readonly List<Room> rooms = new List<Room>(); 
+    static readonly List<Room> rooms = new List<Room>();
     static readonly object roomsLock = new object();
+
     static void Main()
     {
-        
         TcpListener server = new TcpListener(IPAddress.Any, 5000);
         server.Start();
         Console.WriteLine("Server started on port 5000...");
@@ -29,7 +30,6 @@ class GameServer
 
     static void HandleClient(TcpClient ClientConnection)
     {
-       
         NetworkStream stream = ClientConnection.GetStream();
         BinaryReader reader = new BinaryReader(stream);
         BinaryWriter WriteToClient = new BinaryWriter(stream);
@@ -42,10 +42,9 @@ class GameServer
             int id = ++ClientsCount;
             client = new Client(id, guestUsername);
             clients[ClientConnection] = client;
-           
         }
 
-        Console.WriteLine(clients[ClientConnection].Name + " has joined the Game.");
+        Console.WriteLine($"{clients[ClientConnection].Name} has joined the Game.");
 
         try
         {
@@ -64,49 +63,85 @@ class GameServer
                                 WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.SEND_CATEGORIES, category));
                             }
                             WriteToClient.Write(EventProcessor.EventAsSting(PlayEvents.END));
-
                         }
                         break;
+
                     case PlayEvents.CREATE_ROOM:
                         {
-
                             string category = processedEvent.Data;
-                            Console.WriteLine(category);
+                            Console.WriteLine($"Received CREATE_ROOM for category: {category}");
                             if (clients.ContainsKey(ClientConnection))
                             {
                                 int hostId = clients[ClientConnection].ID;
                                 Room newRoom = new Room(hostId, category);
-                                Console.WriteLine(newRoom.roomID);
-                                Console.WriteLine(newRoom.RandomWord);
+                                Console.WriteLine($"New room created: ID={newRoom.roomID}, Word={newRoom.RandomWord}");
                                 lock (lockObj)
                                 {
                                     rooms.Add(newRoom);
                                     clients[ClientConnection].RoomID = newRoom.roomID;
                                 }
-
-                                Console.WriteLine($"Room {newRoom.roomID} created by {clients[ClientConnection].Name} " +
-                                                  $"with category '{category}' and random word '{newRoom.RandomWord}'.");
-
+                                Console.WriteLine($"Room {newRoom.roomID} created by {clients[ClientConnection].Name} with category '{category}' and random word '{newRoom.RandomWord}'.");
                                 WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.ROOM_CREATED, newRoom.roomID));
-
-                              
+                                // **Broadcast the new room data to all connected clients:**
+                                string roomDetails = $"{newRoom.roomID}|{newRoom.Host}|{newRoom.RoomState}";
+                                string formattedEvent = EventProcessor.SendEventWithData(PlayEvents.SEND_ROOM, roomDetails);
+                                lock (lockObj)
+                                {
+                                    foreach (TcpClient clientt in clients.Keys)
+                                    {
+                                        try
+                                        {
+                                            BinaryWriter writer = new BinaryWriter(clientt.GetStream());
+                                            writer.Write(formattedEvent);
+                                            writer.Flush();
+                                            Console.WriteLine($"Broadcast sent: {formattedEvent}");
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Console.WriteLine("Broadcast error: " + ex.Message);
+                                        }
+                                    }
+                                }
                             }
-                            break;
-
 
                         }
-                }
-                }
+                        break;
 
+                    case PlayEvents.GET_ROOMS:
+                        Console.WriteLine($"{clients[ClientConnection].Name} requested rooms list.");
+                        lock (roomsLock)
+                        {
+                            try
+                            {
+                                foreach (Room room in rooms)
+                                {
+                                   
+                                    string roomDetails = $"{room.roomID}|{room.Host}|{room.RoomState}";
+                                    string formattedEvent = EventProcessor.SendEventWithData(PlayEvents.SEND_ROOM, roomDetails);
+                                    WriteToClient.Write(formattedEvent);
+                                    WriteToClient.Flush();
+                                    Console.WriteLine($"Sent: {formattedEvent}");
+                                }
+                                
+                                WriteToClient.Write(EventProcessor.EventAsSting(PlayEvents.END));
+                                WriteToClient.Flush();
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Error sending rooms: {ex.Message}");
+                            }
+                        }
+                        break;
+                }
+            }
         }
         catch
         {
             lock (lockObj)
             {
-                Console.WriteLine(clients[ClientConnection].Name + " disconnected.");
+                Console.WriteLine($"{clients[ClientConnection].Name} disconnected.");
                 clients.Remove(ClientConnection);
             }
-
         }
         finally
         {
@@ -138,6 +173,4 @@ class GameServer
             Console.WriteLine($"Access Denied :{ex.Message}");
         }
     }
-    
 }
-
