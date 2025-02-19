@@ -149,9 +149,11 @@ class GameServer
                             {
                                 foreach (Room room in rooms)
                                 {
-                                   
-                                    string roomDetails = $"{room.roomID}|{room.Host.Name}|{room.RoomState}";
-                                    string formattedEvent = EventProcessor.SendEventWithData(PlayEvents.SEND_ROOM, roomDetails);
+
+                                //string roomDetails = $"{room.roomID}|{room.Host.Name}|{room.RoomState}";
+                                string roomDetails = JsonSerializer.Serialize(room);
+
+                                string formattedEvent = EventProcessor.SendEventWithData(PlayEvents.SEND_ROOM, roomDetails);
                                     WriteToClient.Write(formattedEvent);
                                     WriteToClient.Flush();
                                 }
