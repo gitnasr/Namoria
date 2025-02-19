@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -16,8 +17,10 @@ namespace Client
         private string TheWord = "apple";
         private List<char> charList;
         private List<Label> dashLabels = new List<Label>();
+        private int RoomID = -1;
         public Game(int roomID)
         {
+            RoomID = roomID;
             InitializeComponent();
             charList = new List<char>(TheWord.ToCharArray());
             CreateAlphabetButtons();
@@ -124,8 +127,44 @@ namespace Client
 
         private void Game_Load(object sender, EventArgs e)
         {
-
+            Thread Listener = new Thread(() => ListenForEventsAsync());
+            Listener.Start();
         }
+        private void UpdateUI(string message)
+        {
+      
+            this.Invoke((MethodInvoker)delegate
+            {
+              
+                label2.Text = message;
+            });
+        }
+        private async Task ListenForEventsAsync()
+        {
+            Connection.SendToServer(PlayEvents.FETCH_ROOM_DATA,RoomID );
+
+            while (true)
+            {
+
+                string response = await Task.Run(() => Connection.ReadFromServer.ReadString());
+                ProcessedEvent processedEvent = EventProcessor.ProcessEvent(response);
+                Room room = ConvertRoom(processedEvent.Data);
+                switch (processedEvent.Event)
+                    {
+                        case PlayEvents.PLAYER_JOINED:
+                            UpdateUI(room.Player2.Name);
+                            break;
+                        case PlayEvents.SEND_ROOM_DATA:
+                            if (room.Player2 != null)
+                        {
+                            UpdateUI(room.Player2.Name);
+                        }
+                        break;
+                    }
+                }
+               
+              
+            }
 
         private void Game_Leave(object sender, EventArgs e)
         {
@@ -136,6 +175,12 @@ namespace Client
         {
             Application.Exit();
 
+        }
+
+        private Room ConvertRoom(string RoomAsString)
+        {
+            Room room = JsonSerializer.Deserialize<Room>(RoomAsString);
+            return room;
         }
     }
 }

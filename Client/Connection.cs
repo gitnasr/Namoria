@@ -13,7 +13,8 @@ namespace Client
         private static TcpClient client =  new TcpClient("127.0.0.1", 5000);
         public static BinaryReader ReadFromServer;
         static BinaryWriter WriteToServer;
-      public void ConnectToServer(string username)
+
+        public void ConnectToServer(string username)
         {
             try
             {
@@ -37,10 +38,10 @@ namespace Client
                     throw ;
             }
         }
-        public static void SendToServer(PlayEvents playEvent, object data = null)
+        public static  void SendToServer(PlayEvents playEvent, object data = null)
         {
             if (data == null)
-                WriteToServer.Write(EventProcessor.EventAsSting(playEvent));
+                 WriteToServer.Write(EventProcessor.EventAsSting(playEvent));
             else
                 WriteToServer.Write(EventProcessor.SendEventWithData(playEvent, data));
         }
@@ -53,6 +54,7 @@ namespace Client
 
 
         }
+        
 
     }
 }

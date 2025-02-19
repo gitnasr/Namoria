@@ -19,8 +19,17 @@ public class RoomCard : Panel
     public Label RoomStatus { get; private set; }
 
 
-
-    public RoomCard(int id, string name, string status, int ParentWidth)
+    private RoomState _roomState;
+    public RoomState State
+    {
+        get => _roomState;
+        set
+        {
+            _roomState = value;
+            UpdateJoinButtonState();
+        }
+    }
+    public RoomCard(int id, string name, string status, int ParentWidth )
     {
         this.RoomID = id;
         this.BackColor = Colors.GetColor(DefinedColors.primary);
@@ -28,7 +37,7 @@ public class RoomCard : Panel
         this.Padding = new Padding(15);
         this.Margin = new Padding(10);
         this.Height = 100;
-        this.Width = ParentWidth - 20;
+        this.Width = ParentWidth -  20;
 
          RoomLabelID = new Label
         {
@@ -95,5 +104,22 @@ public class RoomCard : Panel
         HostLabel.Location = new Point(10, 10);
         RoomStatus.Location = new Point(10, 40);
         buttonPanel.Location = new Point(10, 70);
+    }
+    private void UpdateJoinButtonState()
+    {
+        if (JoinButton.InvokeRequired)
+        {
+            JoinButton.Invoke(new Action(() => UpdateJoinButtonState()));
+            return;
+        }
+
+        JoinButton.Enabled = State == RoomState.WAITING;
+    }
+    
+    public enum RoomState
+    {
+        WAITING,
+        PLAYING,
+        FULL
     }
 }

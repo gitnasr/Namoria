@@ -14,6 +14,8 @@ namespace Client
     {
         private string SelectedCategory;
         private Form parentForm;
+        Connection connection = new Connection();
+
         public CreateRoom(Form ParentForm)
         {
             parentForm = ParentForm;
@@ -21,11 +23,11 @@ namespace Client
             InitializeComponent();
         }
 
-        private async void GetAllCategories()
+        private async Task GetAllCategories()
         {
             try
             {
-                await Task.Run(() =>
+                await Task.Run(async () =>
                 {
 
                     Connection.SendToServer(PlayEvents.GET_CATEGORIES);
@@ -93,9 +95,9 @@ namespace Client
 
 
 
-        private void CreateRoom_Load(object sender, EventArgs e)
+        private async void CreateRoom_Load(object sender, EventArgs e)
         {
-            GetAllCategories();
+           await GetAllCategories();
         }
 
 

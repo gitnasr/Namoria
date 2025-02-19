@@ -11,11 +11,17 @@ namespace Client
         string PlayerUsername;
         Connection connection = new Connection();
 
+        private List<RoomCard> roomCards = new List<RoomCard>();
+        private FlowLayoutPanel RoomPanel;
+        private int CurrentCount = 0;
+
+
 
         public Lobby()
         {
             InitializeComponent();
             RequestUsername();
+            RoomPanel = flowLayoutPanel2;
 
         }
 
@@ -33,64 +39,119 @@ namespace Client
         }
 
 
-
-
-
-
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             connection.CloseConnection();
         }
+        private async Task OnLoadGetRooms()
+        {
+            Connection.SendToServer(PlayEvents.GET_ROOMS);
+            var tempRoomCards = new List<RoomCard>();
+            int IncomingCount = 0;
+
+            while (true)
+            {
+                try
+                {
+                    string response = await Task.Run(() => Connection.ReadFromServer.ReadString());
+                    ProcessedEvent parsedEvent = EventProcessor.ProcessEvent(response);
+
+                    switch (parsedEvent.Event)
+                    {
+                        case PlayEvents.SEND_ROOM:
+                            HandleRoomData(parsedEvent.Data, tempRoomCards);
+                            IncomingCount++;
+                            break;
+
+                        case PlayEvents.END:
+                            if (IncomingCount != CurrentCount)
+                            {
+
+                                this.Invoke((MethodInvoker)delegate
+                                {
+                                    RoomPanel.Controls.Clear();
+                                    roomCards = tempRoomCards;
+                                    foreach (var card in roomCards)
+                                    {
+                                        RoomPanel.Controls.Add(card);
+                                    }
+                                });
+                                CurrentCount = IncomingCount;
+                            }
+                            return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error receiving rooms: {ex.Message}");
+                    return;
+                }
+            }
+        }
+
 
 
         private void Form1_Load(object sender, EventArgs e)
         {
 
-            FlowLayoutPanel panel = flowLayoutPanel2;
+
+            timer1.Start();
 
 
-            var rooms = new[]
+        }
+
+        private void JoinRoom(int RoomID)
+        {
+            MessageBox.Show("Joining Room");
+            Connection.SendToServer(PlayEvents.JOIN_ROOM, RoomID);
+
+            Form form = new Game(RoomID);
+
+            form.Show();
+            Hide();
+
+        }
+
+        private void HandleRoomData(string RoomData, List<RoomCard> tempRoomCards)
+        {
+            try
             {
-            new { ID = 1, Name = "NASR", Status = "Waiting" },
-            new { ID = 2, Name = "NOURAN", Status = "Playing" },
-            new { ID = 3, Name = "Nour", Status = "Full" },
-            new { ID = 4, Name = "Nouran", Status = "Waiting" },
-            new { ID = 5, Name = "Nouran", Status = "Waiting" },
-            new { ID = 6, Name = "Nouran", Status = "Waiting" },
-            new { ID = 7, Name = "Nouran", Status = "Waiting" },
-            new { ID = 8, Name = "Nouran", Status = "Waiting" },
-            new { ID = 9, Name = "Nouran", Status = "Waiting" },
+                string[] roomData = RoomData.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
 
-            new { ID = 10, Name = "Nouran", Status = "Waiting" },
-        };
+                if (roomData.Length == 3)
+                {
+                    int roomId = int.Parse(roomData[0]);
+                    string host = roomData[1];
+                    string roomState = roomData[2];
 
-            foreach (var room in rooms)
-            {
-                RoomCard card = new RoomCard(room.ID, room.Name, room.Status, panel.Width - 30);
-                card.JoinClicked += (s, id) => MessageBox.Show($"Joining Room {id}");
-                card.WatchClicked += (s, id) => MessageBox.Show($"Watching Room {id}");
-
-
-                panel.Controls.Add(card);
-
-
+                    RoomCard card = new RoomCard(roomId, host, roomState, RoomPanel.Width);
+                    card.JoinClicked += (s, id) => JoinRoom(id);
+                    card.WatchClicked += (s, id) => MessageBox.Show($"Watching Room {id}");
+                    tempRoomCards.Add(card);
+                }
+                else
+                {
+                    MessageBox.Show("Somthing went error while parsing");
+                }
             }
-
-            this.Controls.Add(panel);
-
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error processing room data: {ex.Message}");
+            }
         }
 
         private void ExitButton_Click(object sender, EventArgs e)
         {
             connection.CloseConnection();
             Application.Exit();
+
         }
 
         private void CreateRoomButton_Click(object sender, EventArgs e)
         {
             Form form = new CreateRoom(this);
             form.Show();
-            this.Hide();
+            Hide();
 
         }
 
@@ -103,6 +164,23 @@ namespace Client
         {
             Application.Exit();
 
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            OnLoadGetRooms();
+        }
+
+        private void Lobby_VisibleChanged(object sender, EventArgs e)
+        {
+            if (Visible)
+            {
+                timer1.Start();
+            }
+            else
+            {
+                timer1.Stop();
+            }
         }
     }
 }
