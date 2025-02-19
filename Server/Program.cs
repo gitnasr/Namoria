@@ -80,8 +80,7 @@ class GameServer
         {
             return "";
         }
-        string jsonString = JsonSerializer.Serialize(room);
-        return jsonString;
+        return JsonSerializer.Serialize(room);
     }
 
     static void HandleClient(TcpClient ClientConnection)
@@ -174,8 +173,8 @@ class GameServer
                             if (room != null)
                             {
                                
-                                    Console.WriteLine($"{clients[ClientConnection].Name} joined room {roomID}.");
-                                    Client NewPlayer = clients[ClientConnection];
+                                Console.WriteLine($"{clients[ClientConnection].Name} joined room {roomID}.");
+                                Client NewPlayer = clients[ClientConnection];
                                 room.AddPlayer(NewPlayer);
                                 string roomData = GetAllRoomData(roomID);
 
@@ -189,6 +188,7 @@ class GameServer
                             }
                         }
                         break;
+                    
                     case PlayEvents.FETCH_ROOM_DATA:
                         {
                             int roomID = int.Parse(processedEvent.Data);
@@ -197,6 +197,8 @@ class GameServer
                             WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.SEND_ROOM_DATA, roomData));
                         }
                         break;
+                   
+                    
                 }
             }
         }

@@ -152,8 +152,10 @@ namespace Client
                 switch (processedEvent.Event)
                     {
                         case PlayEvents.PLAYER_JOINED:
+                        {
                             UpdateUI(room.Player2.Name);
-                            break;
+                        }
+                        break;
                         case PlayEvents.SEND_ROOM_DATA:
                             if (room.Player2 != null)
                         {
