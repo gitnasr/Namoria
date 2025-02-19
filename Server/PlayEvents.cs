@@ -6,6 +6,10 @@
     ROOM_CREATED,
     GET_ROOMS,
     SEND_ROOM,
+    JOIN_ROOM,
+    PLAYER_JOINED,
+    FETCH_ROOM_DATA,
+    SEND_ROOM_DATA,
     END
 
 }
@@ -13,7 +17,6 @@
 
 public enum RoomState
 {
-    FULL,
     WAITING,
     PLAYING
 }

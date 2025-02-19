@@ -100,6 +100,18 @@ namespace Client
 
         }
 
+        private void JoinRoom(int RoomID)
+        {
+            MessageBox.Show("Joining Room");
+            Connection.SendToServer(PlayEvents.JOIN_ROOM, RoomID);
+
+            Form form = new Game(RoomID);
+
+            form.Show();
+            Hide();
+
+        }
+
         private void HandleRoomData(string RoomData, List<RoomCard> tempRoomCards)
         {
             try
@@ -113,7 +125,7 @@ namespace Client
                     string roomState = roomData[2];
 
                     RoomCard card = new RoomCard(roomId, host, roomState, RoomPanel.Width);
-                    card.JoinClicked += (s, id) => MessageBox.Show($"Joining Room {id}");
+                    card.JoinClicked += (s, id) => JoinRoom(id);
                     card.WatchClicked += (s, id) => MessageBox.Show($"Watching Room {id}");
                     tempRoomCards.Add(card);
                 }

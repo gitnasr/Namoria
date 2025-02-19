@@ -1,39 +1,39 @@
-﻿using System;
+﻿using Server;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
 
-namespace Server
-{
-    public enum RoomState
-    {
-        PENDING,
-        PLAYING
-    }
+ 
 
-    class Room
+   public class Room
     {
         private static int count =0;
         private static Random random = new Random();
         private static readonly object countLock = new object();
-        public int roomID { get; private set; }
-        public int Host { get; private set; }
-        public int? Player2 { get; set; }
-        public string RandomWord { get; private set; }
-        public List<int> Watchers { get; private set; }
+        public int roomID { get;  set; }
+        public Client Host { get;  set; }
+        public Client? Player2 { get; set; }
+        public string RandomWord { get;  set; }
+        public List<Client> Watchers { get; set; }
         public RoomState RoomState { get; set; }
-        public int? CurrentTurn { get; set; }
-        public char[] ReveledLetters { get; private set; }
+        public Client? CurrentTurn { get; set; }
+        public char[] ReveledLetters { get; set; }
+        public Room()
+        {
+            Watchers = new List<Client>();
+            ReveledLetters = Array.Empty<char>(); 
+        }
 
-        private static int GetNextRoomId()
+    private static int GetNextRoomId()
         {
             lock (countLock)
             {
                 return ++count;
             }
         }
-        public Room(int host, string category)
+        public Room(Client host, string category)
         {
             roomID = GetNextRoomId();
             Host = host;
@@ -45,8 +45,8 @@ namespace Server
                 ReveledLetters[i] = '_';
             }
             Player2 = null;
-            Watchers = new List<int>();
-            RoomState = RoomState.PENDING;
+            Watchers = new List<Client>();
+            RoomState = RoomState.WAITING;
             CurrentTurn = host;
         }
 
@@ -71,7 +71,7 @@ namespace Server
         public bool ProcessTurn(char guessedLetter, int playerID, out bool isCorrectGuess)
         {
             isCorrectGuess = false;
-            if (playerID != CurrentTurn)
+            if (playerID != CurrentTurn.ID)
             {
                 return false;
             }
@@ -97,13 +97,20 @@ namespace Server
         }
         public void switchTurn()
         {
-            if (Player2.HasValue)
-            {
+           
                 if (CurrentTurn == Player2)
                     CurrentTurn = Host;
                 else
                     CurrentTurn = Player2;
+        }
+
+        public void AddPlayer(Client client)
+        {
+            if (Player2 == null)
+            {
+                Player2 = client;
+            RoomState = RoomState.PLAYING;
             }
+         
         }
     }
-}
