@@ -109,7 +109,7 @@
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.Size = new Size(552, 170);
+            tableLayoutPanel2.Size = new Size(552, 171);
             tableLayoutPanel2.TabIndex = 7;
             // 
             // CreateRoom
@@ -117,7 +117,7 @@
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(9, 18, 44);
-            ClientSize = new Size(552, 385);
+            ClientSize = new Size(552, 386);
             Controls.Add(tableLayoutPanel2);
             Controls.Add(CategoriesTable);
             Controls.Add(label1);

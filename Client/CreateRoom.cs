@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace Client
+﻿namespace Client
 {
     public partial class CreateRoom : Form
     {
@@ -97,7 +87,7 @@ namespace Client
 
         private async void CreateRoom_Load(object sender, EventArgs e)
         {
-           await GetAllCategories();
+            await GetAllCategories();
         }
 
 
@@ -121,6 +111,7 @@ namespace Client
                     return;
                 }
                 Form GameForm = new Game(roomID);
+
                 GameForm.Show();
                 this.Hide();
             }
@@ -139,7 +130,7 @@ namespace Client
         private void CreateRoom_FormClosed(object sender, FormClosedEventArgs e)
         {
             this.parentForm.Show();
-           
+
         }
     }
 }
