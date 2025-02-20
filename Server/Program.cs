@@ -214,6 +214,8 @@ class GameServer
                                 room.AddWatcher(Watcher);
                                 string roomData = GetAllRoomData(roomID);
                                 BroadCastToEveryOneInARoom(PlayEvents.WATCH_ROOM, roomID, roomData);
+                                // Send room data to the watcher
+                                WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.SEND_ROOM_DATA, roomData));
                             }
 
                         }
@@ -231,12 +233,14 @@ class GameServer
                                 {
                                     Console.WriteLine($"{clients[ClientConnection].Name} was the host of room {roomID}.");
                                     BroadCastToEveryOneInARoom(PlayEvents.KICK_EVERYONE, roomID, roomData);
+                                    rooms.Remove(room);
 
                                 }
                                 else if (room.Player2 != null && room.Player2.ID == clients[ClientConnection].ID)
                                 {
                                     Console.WriteLine($"{clients[ClientConnection].Name} was player 2 in room {roomID}.");
                                     BroadCastToEveryOneInARoom(PlayEvents.KICK_EVERYONE, roomID, roomData);
+                                    rooms.Remove(room);
 
 
                                 }
@@ -250,7 +254,59 @@ class GameServer
                             }
                         }
                         break;
+                    case PlayEvents.GUESS_LETTER:
+                        {
+                            // Data format: "roomID|guessedLetter"
+                            string[] parts = processedEvent.Data.Split('|');
+                            if (parts.Length < 2)
+                                break;
 
+                            int roomID = int.Parse(parts[0]);
+                            char guessedLetter = char.ToLower(parts[1][0]);
+
+                            Room room = rooms.Find(r => r.roomID == roomID);
+                            if (room == null)
+                                break;
+
+                            // Prevent guesses before the game starts (i.e. before Player2 joins)
+                            if (room.RoomState != RoomState.PLAYING)
+                            {
+                                WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.GAME_NOT_STARTED, ""));
+                                break;
+                            }
+
+                            Client currentClient = clients[ClientConnection];
+
+                            // Check if it's the current player's turn
+                            if (room.CurrentTurn.ID != currentClient.ID)
+                            {
+                                WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.NOT_YOUR_TURN, ""));
+                                break;
+                            }
+
+                            bool isCorrectGuess;
+                            bool validTurn = room.ProcessTurn(guessedLetter, currentClient.ID, out isCorrectGuess);
+                            if (!validTurn)
+                                break;
+
+                            bool gameWon = room.isWordRevealed();
+
+                            // If the guess was wrong, switch turns.
+                            if (!isCorrectGuess)
+                                room.switchTurn();
+
+
+
+                            string roomJson = JsonSerializer.Serialize(room);
+
+                            BroadCastToEveryOneInARoom(PlayEvents.ROOM_UPDATE, roomID, roomJson);
+
+                            if (gameWon)
+                            {
+                                BroadCastToEveryOneInARoom(PlayEvents.GAME_OVER, roomID, roomJson);
+                            }
+                            break;
+                        }
 
                 }
             }
@@ -287,7 +343,6 @@ class GameServer
             {
                 string[] File = Path.GetFileName(file).Split('.');
                 Categories.Add(File[0]);
-                Console.WriteLine($"{File[0]}");
             }
         }
         catch (Exception ex)

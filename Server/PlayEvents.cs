@@ -13,8 +13,12 @@
     WATCH_ROOM,
     LEAVE_ROOM,
     KICK_EVERYONE,
-    END
-
+    GUESS_LETTER,
+    END,
+    ROOM_UPDATE,
+    GAME_OVER,
+    GAME_NOT_STARTED,
+    NOT_YOUR_TURN
 }
 
 

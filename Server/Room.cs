@@ -21,6 +21,7 @@ public class Room
         Watchers = new List<Client>();
         ReveledLetters = Array.Empty<char>();
     }
+
     public void AddWatcher(Client client)
     {
         Watchers.Add(client);
@@ -77,10 +78,10 @@ public class Room
 
         for (int i = 0; i < RandomWord.Length; i++)
         {
-            if (RandomWord[i] == guessedLetter)
+            if (char.ToLower(RandomWord[i]) == guessedLetter)
             {
                 ReveledLetters[i] = RandomWord[i];
-                isCorrectGuess |= true;
+                isCorrectGuess = true;
             }
         }
         return true;
