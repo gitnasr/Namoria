@@ -11,23 +11,26 @@ using System.Windows.Forms;
 
 namespace Client
 {
+    public class GameRoomState
+    {
+        public int roomID { get; set; }
+        public char[] ReveledLetters { get; set; }
+        public int CurrentTurnID { get; set; }
+    }
     public partial class Game : Form
     {
 
-        private string TheWord = "apple";
-        private List<char> charList;
+        private string TheWord = "";
         private List<Label> dashLabels = new List<Label>();
         private int RoomID = -1;
         public Game(int roomID)
         {
             RoomID = roomID;
             InitializeComponent();
-            charList = new List<char>(TheWord.ToCharArray());
+            label1.Text = $"Room ID: {roomID} - Game Started!";
             CreateAlphabetButtons();
-            DisplayDashes();
-            label1.Text = $"Room ID: {roomID} Hello YAYYYYYYYYYYYYYYYYY!";
+            
         }
-
 
 
         private void CreateAlphabetButtons()
@@ -60,67 +63,31 @@ namespace Client
 
         private void AlphabetButton_Click(object sender, EventArgs e)
         {
-            Button? clickedButton = sender as Button;
+            Button clickedButton = sender as Button;
             char clickedChar = char.ToLower(clickedButton.Text[0]);
-            //MessageBox.Show("You clicked: " + clickedButton.Text);
-            if (charList.Contains(clickedChar))
-            {
-                //MessageBox.Show($"'{clickedChar}' is in the word!");
-                UpdateDashes(clickedChar);
-                if (IsWordComplete())
-                {
-                    MessageBox.Show("Congratulations! You are the winner!");
-                }
-            }
-            else
-            {
-                MessageBox.Show($"'{clickedChar}' is NOT in the word.");
-            }
+           // clickedButton.Enabled = false;
+
+            // trigger the guess_letter case 3nd el server
+            // The data format is "roomID|guessedLetter"
+            Connection.SendToServer(PlayEvents.GUESS_LETTER, $"{RoomID}|{clickedChar}");
         }
 
-        private void DisplayDashes()
+        private void DisplayDashes(string wordPlaceholder)
         {
-            //panel2.Controls.Clear();
-            //dashLabels.Clear(); // Clear previous references
-
-            int x = 10;
-            int y = 10;
-            int spacing = 10;
-
-            foreach (char c in charList)
+            panel2.Controls.Clear();
+            dashLabels.Clear();
+            int x = 10, y = 10, spacing = 10;
+            for (int i = 0; i < wordPlaceholder.Length; i++)
             {
                 Label dashLabel = new Label();
-                dashLabel.Text = "_";
+                dashLabel.Text = wordPlaceholder[i].ToString();
                 dashLabel.Font = new Font("Arial", 16, FontStyle.Bold);
                 dashLabel.AutoSize = true;
                 dashLabel.Location = new Point(x, y);
-
                 panel2.Controls.Add(dashLabel);
-                dashLabels.Add(dashLabel); // Store reference for updating
-
+                dashLabels.Add(dashLabel);
                 x += dashLabel.Width + spacing;
             }
-        }
-        private void UpdateDashes(char guessedLetter)
-        {
-            for (int i = 0; i < charList.Count; i++)
-            {
-                if (charList[i] == guessedLetter)
-                {
-                    dashLabels[i].Text = guessedLetter.ToString(); // Reveal letter
-                }
-            }
-        }
-
-        private bool IsWordComplete()
-        {
-            // Check if all dashes have been replaced with letters
-            foreach (Label lbl in dashLabels)
-            {
-                if (lbl.Text == "_")
-                    return false;
-            }
-            return true; // All letters are revealed
         }
 
 
@@ -135,7 +102,6 @@ namespace Client
       
             this.Invoke((MethodInvoker)delegate
             {
-              
                 label2.Text = message;
             });
         }
@@ -148,23 +114,83 @@ namespace Client
 
                 string response = await Task.Run(() => Connection.ReadFromServer.ReadString());
                 ProcessedEvent processedEvent = EventProcessor.ProcessEvent(response);
-                Room room = ConvertRoom(processedEvent.Data);
+                
                 switch (processedEvent.Event)
-                    {
-                        case PlayEvents.PLAYER_JOINED:
-                            UpdateUI(room.Player2.Name);
-                            break;
-                        case PlayEvents.SEND_ROOM_DATA:
-                            if (room.Player2 != null)
+                {
+                    case PlayEvents.PLAYER_JOINED:
                         {
+                            Room r = ConvertRoom(processedEvent.Data);
+                            UpdateUI(r.Player2.Name);
+                        }
+                        break;
+
+                    case PlayEvents.SEND_ROOM_DATA:
+                        Room room = ConvertRoom(processedEvent.Data);
+                        if (room.Player2 != null)
+                        { 
                             UpdateUI(room.Player2.Name);
                         }
                         break;
-                    }
+
+                    case PlayEvents.ROOM_UPDATE:
+                        {
+                            // Deserialize the JSON into a GameRoomState object
+                            GameRoomState update = JsonSerializer.Deserialize<GameRoomState>(processedEvent.Data);
+                            UpdateGameStateUI(update);
+                            break;
+                        }
+
+                    case PlayEvents.GAME_OVER:
+                        {
+                            this.Invoke((MethodInvoker)delegate
+                            {
+                                string winnerName = processedEvent.Data; // Winner's name sent from server
+                                MessageBox.Show("Game Over! Winner: " + winnerName);
+                                DisableAlphabetButtons();
+                            });
+                            break;
+                        }
+
+                    case PlayEvents.GAME_NOT_STARTED:
+                        {
+                            this.Invoke((MethodInvoker)delegate
+                            {
+                                MessageBox.Show("Game has not started yet! Waiting for Player 2.");
+                            });
+                            break;
+                        }
+                    case PlayEvents.NOT_YOUR_TURN:
+                        {
+                            this.Invoke((MethodInvoker)delegate
+                            {
+                                MessageBox.Show("It is not your turn!");
+                            });
+                            break;
+                        }
                 }
-               
-              
-            }
+
+            }  
+        }
+
+        private void UpdateGameStateUI(GameRoomState update)
+        {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    // Rebuild dash labels if needed.
+                    if (dashLabels.Count != update.ReveledLetters.Length)
+                    {
+                        DisplayDashes(new string(update.ReveledLetters));
+                    }
+                    else
+                    {
+                        for (int i = 0; i < update.ReveledLetters.Length; i++)
+                        {
+                            dashLabels[i].Text = update.ReveledLetters[i].ToString();
+                        }
+                    }
+                    label2.Text = "Current Turn: " + update.CurrentTurnID.ToString();
+                });
+        }
 
         private void Game_Leave(object sender, EventArgs e)
         {
@@ -176,7 +202,16 @@ namespace Client
             Application.Exit();
 
         }
-
+        private void DisableAlphabetButtons()
+        {
+            foreach (Control ctrl in panel1.Controls)
+            {
+                if (ctrl is Button btn)
+                {
+                    btn.Enabled = false;
+                }
+            }
+        }
         private Room ConvertRoom(string RoomAsString)
         {
             Room room = JsonSerializer.Deserialize<Room>(RoomAsString);

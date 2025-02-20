@@ -37,55 +37,61 @@
             // 
             // panel1
             // 
-            panel1.Location = new Point(55, 12);
+            panel1.Location = new Point(44, 10);
+            panel1.Margin = new Padding(2, 2, 2, 2);
             panel1.Name = "panel1";
-            panel1.Size = new Size(656, 98);
+            panel1.Size = new Size(525, 78);
             panel1.TabIndex = 0;
             // 
             // panel2
             // 
-            panel2.Location = new Point(41, 214);
+            panel2.Location = new Point(33, 171);
+            panel2.Margin = new Padding(2, 2, 2, 2);
             panel2.Name = "panel2";
-            panel2.Size = new Size(747, 210);
+            panel2.Size = new Size(598, 168);
             panel2.TabIndex = 1;
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(76, 173);
+            label1.Location = new Point(61, 138);
+            label1.Margin = new Padding(2, 0, 2, 0);
             label1.Name = "label1";
-            label1.Size = new Size(59, 25);
+            label1.Size = new Size(50, 20);
             label1.TabIndex = 1;
             label1.Text = "label1";
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(376, 150);
+            label2.Location = new Point(301, 120);
+            label2.Margin = new Padding(2, 0, 2, 0);
             label2.Name = "label2";
-            label2.Size = new Size(183, 25);
+            label2.Size = new Size(145, 20);
             label2.TabIndex = 2;
-            label2.Text = "Waiting for a Partener";
+            label2.Text = "Waiting for a Partner";
             // 
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(75, 129);
+            label3.Location = new Point(60, 103);
+            label3.Margin = new Padding(2, 0, 2, 0);
             label3.Name = "label3";
-            label3.Size = new Size(59, 25);
+            label3.Size = new Size(50, 20);
             label3.TabIndex = 3;
             label3.Text = "label3";
             // 
             // Game
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(640, 360);
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(panel2);
             Controls.Add(label1);
             Controls.Add(panel1);
+            Margin = new Padding(2, 2, 2, 2);
             Name = "Game";
             Text = "Game";
             FormClosing += Game_FormClosing;

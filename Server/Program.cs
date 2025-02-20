@@ -4,6 +4,12 @@ using System.Reflection;
 using Server;
 using System.Text.Json;
 
+public class GameRoomState
+{
+    public int roomID { get; set; }
+    public char[] ReveledLetters { get; set; }
+    public int CurrentTurnID { get; set; }
+}
 class GameServer
 {
     public static List<string> Categories = new List<string>();
@@ -36,7 +42,7 @@ class GameServer
         Room room = rooms.Find(r => r.roomID == roomID);
         Client Host = room.Host;
         Client player2 = room.Player2;
-        TcpClient hostClient = clients.FirstOrDefault(c => c.Value.ID == Host.ID-1).Key;
+        TcpClient hostClient = clients.FirstOrDefault(c => c.Value.ID == Host.ID).Key;
         if (hostClient != null)
         {
             NetworkStream stream = hostClient.GetStream();
@@ -46,7 +52,7 @@ class GameServer
         Console.WriteLine("Sent to host");
         if (room.Player2 != null)
         {
-            int player2ID = room.Player2.ID -1 ;
+            int player2ID = room.Player2.ID;
             TcpClient player2Client = clients.FirstOrDefault(c => c.Value.ID == player2ID).Key;
             if (player2Client != null)
             {
@@ -60,7 +66,7 @@ class GameServer
             foreach (Client WatcherID in room.Watchers)
             {
                 Console.WriteLine($"Sending to {WatcherID}");
-                TcpClient client = clients.FirstOrDefault(c => c.Value.ID == WatcherID.ID-1).Key;
+                TcpClient client = clients.FirstOrDefault(c => c.Value.ID == WatcherID.ID).Key;
                 if (client != null)
                 {
                     NetworkStream stream = client.GetStream();
@@ -197,6 +203,64 @@ class GameServer
                             WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.SEND_ROOM_DATA, roomData));
                         }
                         break;
+                    case PlayEvents.GUESS_LETTER:
+                        {
+                            // Data format: "roomID|guessedLetter"
+                            string[] parts = processedEvent.Data.Split('|');
+                            if (parts.Length < 2)
+                                break;
+
+                            int roomID = int.Parse(parts[0]);
+                            char guessedLetter = char.ToLower(parts[1][0]);
+
+                            Room room = rooms.Find(r => r.roomID == roomID);
+                            if (room == null)
+                                break;
+
+                            // Prevent guesses before the game starts (i.e. before Player2 joins)
+                            if (room.RoomState != RoomState.PLAYING)
+                            {
+                                WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.GAME_NOT_STARTED, ""));
+                                break;
+                            }
+
+                            Client currentClient = clients[ClientConnection];
+
+                            // Check if it's the current player's turn
+                            if (room.CurrentTurn.ID != currentClient.ID)
+                            {
+                                WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.NOT_YOUR_TURN, ""));
+                                break;
+                            }
+
+                            bool isCorrectGuess;
+                            bool validTurn = room.ProcessTurn(guessedLetter, currentClient.ID, out isCorrectGuess);
+                            if (!validTurn)
+                                break;
+
+                            bool gameWon = room.isWordRevealed();
+
+                            // If the guess was wrong, switch turns.
+                            if (!isCorrectGuess)
+                                room.switchTurn();
+
+                            GameRoomState update = new GameRoomState
+                            {
+                                roomID = room.roomID,
+                                ReveledLetters = room.ReveledLetters,
+                                CurrentTurnID = room.CurrentTurn.ID
+                            };
+                            string roomJson = JsonSerializer.Serialize(update);
+
+                            BroadCastToEveryOneInARoom(PlayEvents.ROOM_UPDATE, roomID, roomJson);
+
+                            if (gameWon)
+                            {
+                                BroadCastToEveryOneInARoom(PlayEvents.GAME_OVER, roomID, currentClient.Name);
+                            }
+                            break;
+                        }
+
                 }
             }
         }
