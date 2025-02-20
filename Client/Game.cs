@@ -177,12 +177,7 @@ namespace Client
                         break;
                     case PlayEvents.KICK_EVERYONE:
                         {
-                            Invoke((MethodInvoker)delegate
-                            {
-                                MessageBox.Show("You have been kicked out of the room!");
-                                this.Close();
-
-                            });
+                            MessageBox.Show("You have been kicked out of the room!");
                         }
                         break;
                 }
@@ -198,9 +193,9 @@ namespace Client
 
         private void Game_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //Connection.CloseConnection();
-
+            Connection.SendToServer(PlayEvents.LEAVE_ROOM, RoomID);
             Application.Exit();
+
 
         }
 
@@ -212,7 +207,6 @@ namespace Client
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Connection.SendToServer(PlayEvents.LEAVE_ROOM, RoomID);
 
         }
     }
