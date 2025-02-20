@@ -10,6 +10,9 @@
     PLAYER_JOINED,
     FETCH_ROOM_DATA,
     SEND_ROOM_DATA,
+    WATCH_ROOM,
+    LEAVE_ROOM,
+    KICK_EVERYONE,
     END
 
 }
@@ -18,7 +21,8 @@
 public enum RoomState
 {
     WAITING,
-    PLAYING
+    PLAYING,
+    END
 }
 public class ProcessedEvent
 {
@@ -43,7 +47,7 @@ public static class EventProcessor
     }
     public static ProcessedEvent ProcessEvent(string request)
     {
-  
+
         string[] parts = request.Split('|', 2);
         if (parts.Length == 2)
         {

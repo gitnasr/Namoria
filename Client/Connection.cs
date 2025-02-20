@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net.Sockets;
 
 namespace Client
 {
     class Connection
     {
         private static NetworkStream StreamFromNetwork;
-        private static TcpClient client =  new TcpClient("127.0.0.1", 5000);
+        private static TcpClient client = new TcpClient("127.0.0.1", 5000);
         public static BinaryReader ReadFromServer;
         static BinaryWriter WriteToServer;
 
@@ -31,22 +26,22 @@ namespace Client
             {
                 if (ex is SocketException)
                 {
-                   MessageBox.Show("Server is not running");
+                    MessageBox.Show("Server is not running");
                     return;
                 }
                 else
-                    throw ;
+                    throw;
             }
         }
-        public static  void SendToServer(PlayEvents playEvent, object data = null)
+        public static void SendToServer(PlayEvents playEvent, object data = null)
         {
             if (data == null)
-                 WriteToServer.Write(EventProcessor.EventAsSting(playEvent));
+                WriteToServer.Write(EventProcessor.EventAsSting(playEvent));
             else
                 WriteToServer.Write(EventProcessor.SendEventWithData(playEvent, data));
         }
 
-        public void CloseConnection()
+        public static void CloseConnection()
         {
             client.Close();
             ReadFromServer.Close();
@@ -54,7 +49,7 @@ namespace Client
 
 
         }
-        
+
 
     }
 }

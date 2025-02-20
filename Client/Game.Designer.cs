@@ -33,6 +33,8 @@
             label1 = new Label();
             label2 = new Label();
             label3 = new Label();
+            watcherCount = new Label();
+            button1 = new Button();
             SuspendLayout();
             // 
             // panel1
@@ -76,11 +78,32 @@
             label3.TabIndex = 3;
             label3.Text = "label3";
             // 
+            // watcherCount
+            // 
+            watcherCount.AutoSize = true;
+            watcherCount.Location = new Point(628, 145);
+            watcherCount.Name = "watcherCount";
+            watcherCount.Size = new Size(59, 25);
+            watcherCount.TabIndex = 4;
+            watcherCount.Text = "label4";
+            // 
+            // button1
+            // 
+            button1.Location = new Point(180, 125);
+            button1.Name = "button1";
+            button1.Size = new Size(112, 34);
+            button1.TabIndex = 5;
+            button1.Text = "button1";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
             // Game
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(button1);
+            Controls.Add(watcherCount);
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(panel2);
@@ -102,5 +125,7 @@
         private Label label1;
         private Label label2;
         private Label label3;
+        private Label watcherCount;
+        private Button button1;
     }
 }

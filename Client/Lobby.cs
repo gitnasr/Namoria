@@ -1,8 +1,4 @@
-﻿using System.IO;
-using System.Net.Sockets;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Windows.Forms;
+﻿using System.Text.Json;
 
 
 
@@ -15,7 +11,7 @@ namespace Client
 
         private List<RoomCard> roomCards = new List<RoomCard>();
         private FlowLayoutPanel RoomPanel;
-        private int CurrentCount = 0;
+
 
 
 
@@ -41,10 +37,6 @@ namespace Client
         }
 
 
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            connection.CloseConnection();
-        }
         private async Task OnLoadGetRooms()
         {
             Connection.SendToServer(PlayEvents.GET_ROOMS);
@@ -64,15 +56,15 @@ namespace Client
                             break;
 
                         case PlayEvents.END:
-                                Invoke((MethodInvoker)delegate
+                            Invoke((MethodInvoker)delegate
+                            {
+                                RoomPanel.Controls.Clear();
+                                roomCards = RoomCards;
+                                foreach (var card in roomCards)
                                 {
-                                    RoomPanel.Controls.Clear();
-                                    roomCards = RoomCards;
-                                    foreach (var card in roomCards)
-                                    {
-                                        RoomPanel.Controls.Add(card);
-                                    }
-                                });
+                                    RoomPanel.Controls.Add(card);
+                                }
+                            });
                             return;
                     }
                 }
@@ -89,15 +81,13 @@ namespace Client
         private void Form1_Load(object sender, EventArgs e)
         {
 
-
             timer1.Start();
-
 
         }
 
         private void JoinRoom(int RoomID)
         {
-            
+
             Connection.SendToServer(PlayEvents.JOIN_ROOM, RoomID);
 
             Form form = new Game(RoomID);
@@ -111,18 +101,18 @@ namespace Client
         {
             try
             {
-                Room Room = JsonSerializer.Deserialize<Room>(RoomData);
+                Room? Room = JsonSerializer.Deserialize<Room>(RoomData);
 
-                if (Room != null )
+                if (Room != null)
                 {
-                    
+
                     RoomCard card = new RoomCard(Room.roomID, Room.Host.Name, Room.RoomState.ToString(), RoomPanel.Width);
                     if (Room.Player2 != null)
                     {
                         card.JoinButton.Enabled = false;
                     }
                     card.JoinClicked += (s, id) => JoinRoom(Room.roomID);
-                    card.WatchClicked += (s, id) => MessageBox.Show($"Watching Room {id}");
+                    card.WatchClicked += (s, id) => WatchRoom(Room.roomID);
                     IncomingRoomList.Add(card);
                 }
                 else
@@ -138,7 +128,7 @@ namespace Client
 
         private void ExitButton_Click(object sender, EventArgs e)
         {
-            connection.CloseConnection();
+            Connection.CloseConnection();
             Application.Exit();
 
         }
@@ -177,6 +167,13 @@ namespace Client
             {
                 timer1.Stop();
             }
+        }
+        private void WatchRoom(int RoomID)
+        {
+            Connection.SendToServer(PlayEvents.WATCH_ROOM, RoomID);
+            Form form = new Game(RoomID);
+            form.Show();
+            Hide();
         }
     }
 }

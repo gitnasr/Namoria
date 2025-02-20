@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Text.Json;
 
 namespace Client
 {
@@ -17,15 +8,18 @@ namespace Client
         private string TheWord = "apple";
         private List<char> charList;
         private List<Label> dashLabels = new List<Label>();
-        private int RoomID = -1;
+        private Room RoomData { get; set; }
+        public int RoomID { get; set; }
+
         public Game(int roomID)
         {
-            RoomID = roomID;
             InitializeComponent();
             charList = new List<char>(TheWord.ToCharArray());
             CreateAlphabetButtons();
             DisplayDashes();
-            label1.Text = $"Room ID: {roomID} Hello YAYYYYYYYYYYYYYYYYY!";
+            RoomID = roomID;
+
+            label1.Text = $"Room ID: {RoomID} Hello YAYYYYYYYYYYYYYYYYY!";
         }
 
 
@@ -127,46 +121,75 @@ namespace Client
 
         private void Game_Load(object sender, EventArgs e)
         {
-            Thread Listener = new Thread(() => ListenForEventsAsync());
-            Listener.Start();
+            watcherCount.Text = "Watcher Count: 0";
+            Thread listenForEvents = new Thread(async () => await ListenForEventsAsync());
+            listenForEvents.Start();
         }
         private void UpdateUI(string message)
         {
-      
+
             this.Invoke((MethodInvoker)delegate
             {
-              
+
                 label2.Text = message;
+            });
+        }
+        private void UpdateUI(int count)
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                watcherCount.Text = $"Watcher Count: {count}";
             });
         }
         private async Task ListenForEventsAsync()
         {
-            Connection.SendToServer(PlayEvents.FETCH_ROOM_DATA,RoomID );
+            Connection.SendToServer(PlayEvents.FETCH_ROOM_DATA, RoomID);
 
             while (true)
             {
 
                 string response = await Task.Run(() => Connection.ReadFromServer.ReadString());
                 ProcessedEvent processedEvent = EventProcessor.ProcessEvent(response);
-                Room room = ConvertRoom(processedEvent.Data);
+                RoomData = ConvertRoom(processedEvent.Data);
                 switch (processedEvent.Event)
-                    {
-                        case PlayEvents.PLAYER_JOINED:
+                {
+                    case PlayEvents.PLAYER_JOINED:
                         {
-                            UpdateUI(room.Player2.Name);
+                            if (RoomData.Player2 != null)
+                            {
+                                UpdateUI(RoomData.Player2.Name);
+                            }
                         }
                         break;
-                        case PlayEvents.SEND_ROOM_DATA:
-                            if (room.Player2 != null)
+                    case PlayEvents.SEND_ROOM_DATA:
                         {
-                            UpdateUI(room.Player2.Name);
+                            if (RoomData.Player2 != null)
+                            {
+                                UpdateUI(RoomData.Watchers.Count);
+                            }
                         }
                         break;
-                    }
+                    case PlayEvents.WATCH_ROOM:
+                        {
+
+                            UpdateUI(RoomData.Watchers.Count);
+                        }
+                        break;
+                    case PlayEvents.KICK_EVERYONE:
+                        {
+                            Invoke((MethodInvoker)delegate
+                            {
+                                MessageBox.Show("You have been kicked out of the room!");
+                                this.Close();
+
+                            });
+                        }
+                        break;
                 }
-               
-              
             }
+
+
+        }
 
         private void Game_Leave(object sender, EventArgs e)
         {
@@ -175,6 +198,8 @@ namespace Client
 
         private void Game_FormClosing(object sender, FormClosingEventArgs e)
         {
+            //Connection.CloseConnection();
+
             Application.Exit();
 
         }
@@ -183,6 +208,12 @@ namespace Client
         {
             Room room = JsonSerializer.Deserialize<Room>(RoomAsString);
             return room;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Connection.SendToServer(PlayEvents.LEAVE_ROOM, RoomID);
+
         }
     }
 }

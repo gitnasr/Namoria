@@ -1,7 +1,7 @@
-﻿using System.Net;
+﻿using Server;
+using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
-using Server;
 using System.Text.Json;
 
 class GameServer
@@ -12,7 +12,6 @@ class GameServer
     static object lockObj = new object();
     static int ClientsCount = 0;
     static readonly List<Room> rooms = new List<Room>();
-    static readonly object roomsLock = new object();
 
     static void Main()
     {
@@ -31,50 +30,59 @@ class GameServer
 
     static void BroadCastToEveryOneInARoom(PlayEvents Command, int roomID, string data)
     {
-            
-        Console.WriteLine("Broadcasting to everyone in the room");
-        Room room = rooms.Find(r => r.roomID == roomID);
-        Client Host = room.Host;
-        Client player2 = room.Player2;
-        TcpClient hostClient = clients.FirstOrDefault(c => c.Value.ID == Host.ID-1).Key;
-        if (hostClient != null)
+
+        Console.WriteLine($"Broadcasting {Command} to everyone in the room");
+        Room? room = rooms.Find(r => r.roomID == roomID);
+        if (room != null)
         {
-            NetworkStream stream = hostClient.GetStream();
-            BinaryWriter writer = new BinaryWriter(stream);
-            writer.Write(EventProcessor.SendEventWithData(Command, data));
-        }
-        Console.WriteLine("Sent to host");
-        if (room.Player2 != null)
-        {
-            int player2ID = room.Player2.ID -1 ;
-            TcpClient player2Client = clients.FirstOrDefault(c => c.Value.ID == player2ID).Key;
-            if (player2Client != null)
+
+            Client? Host = room?.Host;
+            Client? player2 = room?.Player2;
+            TcpClient hostClient = clients.FirstOrDefault(c => c.Value.ID == Host?.ID).Key;
+            if (hostClient != null)
             {
-                NetworkStream stream = player2Client.GetStream();
+                Console.WriteLine($"Sending to Host {Host.Name} @ id {Host.ID}");
+                NetworkStream stream = hostClient.GetStream();
                 BinaryWriter writer = new BinaryWriter(stream);
                 writer.Write(EventProcessor.SendEventWithData(Command, data));
             }
-        }
-        if (room != null)
-        {
-            foreach (Client WatcherID in room.Watchers)
+            if (room?.Player2 != null)
             {
-                Console.WriteLine($"Sending to {WatcherID}");
-                TcpClient client = clients.FirstOrDefault(c => c.Value.ID == WatcherID.ID-1).Key;
+
+                int player2ID = room.Player2.ID;
+                Console.WriteLine($"Sending to Player 2 {room.Player2.Name} @ id {player2ID}");
+
+                TcpClient player2Client = clients.FirstOrDefault(c => c.Value.ID == player2ID).Key;
+                if (player2Client != null)
+                {
+                    NetworkStream stream = player2Client.GetStream();
+                    BinaryWriter writer = new BinaryWriter(stream);
+                    writer.Write(EventProcessor.SendEventWithData(Command, data));
+                }
+            }
+
+            foreach (Client Watcher in room.Watchers)
+            {
+                Console.WriteLine($"Sending to Watchers {Watcher.Name}");
+                TcpClient client = clients.FirstOrDefault(c => c.Value.ID == Watcher.ID).Key;
                 if (client != null)
                 {
                     NetworkStream stream = client.GetStream();
                     BinaryWriter writer = new BinaryWriter(stream);
-                    writer.Write(EventProcessor.EventAsSting(Command));
+                    writer.Write(EventProcessor.SendEventWithData(Command, data));
                 }
             }
+
+
         }
 
     }
 
+
+
     static string GetAllRoomData(int RoomID)
     {
-        // get room
+
         Room room = rooms.Find(r => r.roomID == RoomID);
         if (room == null)
         {
@@ -137,35 +145,33 @@ class GameServer
                                 }
                                 Console.WriteLine($"Room {newRoom.roomID} created by {clients[ClientConnection].Name} with category '{category}' and random word '{newRoom.RandomWord}'.");
                                 WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.ROOM_CREATED, newRoom.roomID));
-                                
-                                // Improve this to go though all client in the lobby: Clients in the lobby where they have not joined a room, not in a room list.
+
                             }
 
                         }
                         break;
 
                     case PlayEvents.GET_ROOMS:
-                            try
+                        try
+                        {
+                            foreach (Room room in rooms)
                             {
-                                foreach (Room room in rooms)
-                                {
 
-                                //string roomDetails = $"{room.roomID}|{room.Host.Name}|{room.RoomState}";
                                 string roomDetails = JsonSerializer.Serialize(room);
 
                                 string formattedEvent = EventProcessor.SendEventWithData(PlayEvents.SEND_ROOM, roomDetails);
-                                    WriteToClient.Write(formattedEvent);
-                                    WriteToClient.Flush();
-                                }
-                                
-                                WriteToClient.Write(EventProcessor.EventAsSting(PlayEvents.END));
+                                WriteToClient.Write(formattedEvent);
                                 WriteToClient.Flush();
                             }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine($"Error sending rooms: {ex.Message}");
-                            }
-                      
+
+                            WriteToClient.Write(EventProcessor.EventAsSting(PlayEvents.END));
+                            WriteToClient.Flush();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error sending rooms: {ex.Message}");
+                        }
+
                         break;
                     case PlayEvents.JOIN_ROOM:
                         {
@@ -174,7 +180,7 @@ class GameServer
                             Room? room = rooms.Find(r => r.roomID == roomID);
                             if (room != null)
                             {
-                               
+
                                 Console.WriteLine($"{clients[ClientConnection].Name} joined room {roomID}.");
                                 Client NewPlayer = clients[ClientConnection];
                                 room.AddPlayer(NewPlayer);
@@ -183,14 +189,11 @@ class GameServer
                                 BroadCastToEveryOneInARoom(PlayEvents.PLAYER_JOINED, roomID, roomData);
 
                             }
-                            else
-                            {
-                                Console.WriteLine($"Room {roomID} not found.");
-                                WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.ROOM_CREATED, -1));
-                            }
+
+
                         }
                         break;
-                    
+
                     case PlayEvents.FETCH_ROOM_DATA:
                         {
                             int roomID = int.Parse(processedEvent.Data);
@@ -199,8 +202,56 @@ class GameServer
                             WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.SEND_ROOM_DATA, roomData));
                         }
                         break;
-                   
-                    
+                    case PlayEvents.WATCH_ROOM:
+                        {
+                            int roomID = int.Parse(processedEvent.Data);
+                            Console.WriteLine($"{clients[ClientConnection].Name} requested to watch room {roomID}.");
+                            Room? room = rooms.Find(r => r.roomID == roomID);
+                            if (room != null)
+                            {
+                                Console.WriteLine($"{clients[ClientConnection].Name} is watching room {roomID}.");
+                                Client Watcher = clients[ClientConnection];
+                                room.AddWatcher(Watcher);
+                                string roomData = GetAllRoomData(roomID);
+                                BroadCastToEveryOneInARoom(PlayEvents.WATCH_ROOM, roomID, roomData);
+                            }
+
+                        }
+                        break;
+                    case PlayEvents.LEAVE_ROOM:
+                        {
+                            int roomID = int.Parse(processedEvent.Data);
+                            Console.WriteLine($"{clients[ClientConnection].Name} left room {roomID}.");
+                            Room? room = rooms.Find(r => r.roomID == roomID);
+                            if (room != null)
+                            {
+                                string roomData = GetAllRoomData(roomID);
+
+                                if (room.Host.ID == clients[ClientConnection].ID)
+                                {
+                                    Console.WriteLine($"{clients[ClientConnection].Name} was the host of room {roomID}.");
+                                    BroadCastToEveryOneInARoom(PlayEvents.KICK_EVERYONE, roomID, roomData);
+
+                                }
+                                else if (room.Player2 != null && room.Player2.ID == clients[ClientConnection].ID)
+                                {
+                                    Console.WriteLine($"{clients[ClientConnection].Name} was player 2 in room {roomID}.");
+                                    BroadCastToEveryOneInARoom(PlayEvents.KICK_EVERYONE, roomID, roomData);
+
+
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"{clients[ClientConnection].Name} was a watcher in room {roomID}.");
+                                    room.RemoveWatcher(clients[ClientConnection]);
+                                    BroadCastToEveryOneInARoom(PlayEvents.WATCH_ROOM, roomID, roomData);
+                                }
+
+                            }
+                        }
+                        break;
+
+
                 }
             }
         }
@@ -209,6 +260,8 @@ class GameServer
             lock (lockObj)
             {
                 Console.WriteLine($"{clients[ClientConnection].Name} disconnected.");
+
+
                 clients.Remove(ClientConnection);
             }
         }
