@@ -8,16 +8,18 @@ namespace Client
         private static TcpClient client = new TcpClient("127.0.0.1", 5000);
         public static BinaryReader ReadFromServer;
         static BinaryWriter WriteToServer;
+        public static string Username { get; private set; }
 
         public void ConnectToServer(string username)
         {
             try
             {
+                Username = username;
                 StreamFromNetwork = client.GetStream();
                 ReadFromServer = new BinaryReader(StreamFromNetwork);
                 WriteToServer = new BinaryWriter(StreamFromNetwork);
                 // THIS IS FIRST EVENT THAT CAUSE THE SERVER GOES INTO LOOP on a Thread
-                WriteToServer.Write(username);
+                WriteToServer.Write(Username);
 
 
 
