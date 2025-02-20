@@ -8,7 +8,7 @@ namespace Client
 
         private List<Label> dashLabels = new List<Label>();
         private Room RoomData { get; set; }
-        public int RoomID { get; set; }
+        private int RoomID { get; set; }
 
         public Game(int roomID)
         {
