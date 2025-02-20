@@ -262,7 +262,7 @@ class GameServer
                             // Prevent guesses before the game starts (i.e. before Player2 joins)
                             if (room.RoomState != RoomState.PLAYING)
                             {
-                                WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.GAME_NOT_STARTED, ""));
+                                WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.GAME_NOT_STARTED, "How about waiting for someone to start the game?"));
                                 break;
                             }
 
@@ -271,7 +271,7 @@ class GameServer
                             // Check if it's the current player's turn
                             if (room.CurrentTurn.ID != currentClient.ID)
                             {
-                                WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.NOT_YOUR_TURN, ""));
+                                WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.NOT_YOUR_TURN, "Nice Try, But we handle this case :D !"));
                                 break;
                             }
 

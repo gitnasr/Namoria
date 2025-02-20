@@ -10,6 +10,8 @@ namespace Client
         private Room RoomData { get; set; }
         private int RoomID { get; set; }
 
+        private string Message { get; set; }
+
         public Game(int roomID)
         {
             RoomID = roomID;
@@ -112,11 +114,7 @@ namespace Client
                 string response = await Task.Run(() => Connection.ReadFromServer.ReadString());
                 ProcessedEvent processedEvent = EventProcessor.ProcessEvent(response);
 
-                if (string.IsNullOrEmpty(processedEvent.Data))
-                {
-                    continue;
-                }
-                RoomData = ConvertRoom(processedEvent.Data);
+                DeserlizeData(processedEvent.Data);
 
                 switch (processedEvent.Event)
                 {
@@ -140,6 +138,7 @@ namespace Client
                     case PlayEvents.KICK_EVERYONE:
                         {
                             MessageBox.Show("You have been kicked out of the room!");
+                            Application.Exit();
                         }
                         break;
                     case PlayEvents.ROOM_UPDATE:
@@ -163,7 +162,7 @@ namespace Client
                         {
                             this.Invoke((MethodInvoker)delegate
                             {
-                                MessageBox.Show("Game has not started yet! Waiting for Player 2.");
+                                MessageBox.Show(processedEvent.Data);
                             });
                             break;
                         }
@@ -255,23 +254,20 @@ namespace Client
 
 
         }
-
-        private Room ConvertRoom(string RoomAsString)
+        private void DeserlizeData(string data)
         {
             try
             {
-                if (string.IsNullOrEmpty(RoomAsString))
-                {
-                    throw new ArgumentException("RoomAsString cannot be null or empty");
-                }
-                Room room = JsonSerializer.Deserialize<Room>(RoomAsString);
-                return room;
+                Room room = JsonSerializer.Deserialize<Room>(data);
+                RoomData = room;
             }
             catch (Exception)
             {
-                return null;
+
+                Message = data;
             }
         }
+
 
         private void button1_Click(object sender, EventArgs e)
         {
