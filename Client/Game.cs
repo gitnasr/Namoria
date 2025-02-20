@@ -74,8 +74,8 @@ namespace Client
 
         private void DisplayDashes(string wordPlaceholder)
         {
-            panel2.Controls.Clear();
-            dashLabels.Clear();
+            //panel2.Controls.Clear();
+            //dashLabels.Clear();
             int x = 10, y = 10, spacing = 10;
             for (int i = 0; i < wordPlaceholder.Length; i++)
             {
@@ -134,7 +134,6 @@ namespace Client
 
                     case PlayEvents.ROOM_UPDATE:
                         {
-                            // Deserialize the JSON into a GameRoomState object
                             GameRoomState update = JsonSerializer.Deserialize<GameRoomState>(processedEvent.Data);
                             UpdateGameStateUI(update);
                             break;
@@ -144,7 +143,7 @@ namespace Client
                         {
                             this.Invoke((MethodInvoker)delegate
                             {
-                                string winnerName = processedEvent.Data; // Winner's name sent from server
+                                string winnerName = processedEvent.Data; 
                                 MessageBox.Show("Game Over! Winner: " + winnerName);
                                 DisableAlphabetButtons();
                             });
@@ -176,8 +175,9 @@ namespace Client
         {
                 this.Invoke((MethodInvoker)delegate
                 {
-                    // Rebuild dash labels if needed.
-                    if (dashLabels.Count != update.ReveledLetters.Length)
+                   // kol ma el kelma gets revealed, no of dashes will decrease so i need to check over their count 
+
+                    if (dashLabels.Count != update.ReveledLetters.Length) 
                     {
                         DisplayDashes(new string(update.ReveledLetters));
                     }

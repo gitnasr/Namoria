@@ -217,7 +217,7 @@ class GameServer
                             if (room == null)
                                 break;
 
-                            // Prevent guesses before the game starts (i.e. before Player2 joins)
+                          
                             if (room.RoomState != RoomState.PLAYING)
                             {
                                 WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.GAME_NOT_STARTED, ""));
@@ -226,7 +226,7 @@ class GameServer
 
                             Client currentClient = clients[ClientConnection];
 
-                            // Check if it's the current player's turn
+                           
                             if (room.CurrentTurn.ID != currentClient.ID)
                             {
                                 WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.NOT_YOUR_TURN, ""));
@@ -240,7 +240,7 @@ class GameServer
 
                             bool gameWon = room.isWordRevealed();
 
-                            // If the guess was wrong, switch turns.
+                            // If the guess was wrong, switch turns, otherwise, player can guess again
                             if (!isCorrectGuess)
                                 room.switchTurn();
 
