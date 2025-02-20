@@ -194,14 +194,7 @@ class GameServer
                         }
                         break;
 
-                    case PlayEvents.FETCH_ROOM_DATA:
-                        {
-                            int roomID = int.Parse(processedEvent.Data);
-                            Console.WriteLine($"{clients[ClientConnection].Name} requested room data for room {roomID}.");
-                            string roomData = GetAllRoomData(roomID);
-                            WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.SEND_ROOM_DATA, roomData));
-                        }
-                        break;
+
                     case PlayEvents.WATCH_ROOM:
                         {
                             int roomID = int.Parse(processedEvent.Data);
@@ -214,8 +207,6 @@ class GameServer
                                 room.AddWatcher(Watcher);
                                 string roomData = GetAllRoomData(roomID);
                                 BroadCastToEveryOneInARoom(PlayEvents.WATCH_ROOM, roomID, roomData);
-                                // Send room data to the watcher
-                                WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.SEND_ROOM_DATA, roomData));
                             }
 
                         }

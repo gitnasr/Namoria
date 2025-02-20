@@ -53,10 +53,7 @@ namespace Client
         {
             Button clickedButton = sender as Button;
             char clickedChar = char.ToLower(clickedButton.Text[0]);
-            // clickedButton.Enabled = false;
 
-            // trigger the guess_letter case 3nd el server
-            // The data format is "roomID|guessedLetter"
             Connection.SendToServer(PlayEvents.GUESS_LETTER, $"{RoomID}|{clickedChar}");
 
 
@@ -108,14 +105,13 @@ namespace Client
         }
         private async Task ListenForEventsAsync()
         {
-            Connection.SendToServer(PlayEvents.FETCH_ROOM_DATA, RoomID);
 
             while (true)
             {
 
                 string response = await Task.Run(() => Connection.ReadFromServer.ReadString());
                 ProcessedEvent processedEvent = EventProcessor.ProcessEvent(response);
-                // Check if incoming event is valid json
+
                 if (string.IsNullOrEmpty(processedEvent.Data))
                 {
                     continue;
@@ -133,18 +129,11 @@ namespace Client
                             }
                         }
                         break;
-                    case PlayEvents.SEND_ROOM_DATA:
-                        {
-                            if (RoomData.Player2 != null)
-                            {
-                                UpdateGameStateUI();
-                                UpdateUI(RoomData.Watchers.Count);
-                            }
-                        }
-                        break;
+
                     case PlayEvents.WATCH_ROOM:
                         {
                             UpdateGameStateUI();
+
                             UpdateUI(RoomData.Watchers.Count);
                         }
                         break;
@@ -165,7 +154,7 @@ namespace Client
                             {
 
                                 MessageBox.Show("Game Over! Winner: " + RoomData.CurrentTurn.Name);
-                                DisableAlphabetButtons();
+                                DisableButtons();
                             });
                             break;
                         }
@@ -207,12 +196,32 @@ namespace Client
                     for (int i = 0; i < RoomData.ReveledLetters.Length; i++)
                     {
                         dashLabels[i].Text = RoomData.ReveledLetters[i].ToString();
+                        // Disable the button if the letter is already guessed
+                        // Find the button with the same letter and disable it
+                        foreach (Control ctrl in panel1.Controls)
+                        {
+                            if (ctrl is Button btn)
+                            {
+                                if (btn.Text[0].ToString().ToLower() == RoomData.ReveledLetters[i].ToString().ToLower())
+                                {
+                                    btn.Enabled = false;
+                                }
+                            }
+                        }
                     }
+                }
+                if (RoomData.CurrentTurn.Name != Connection.Username)
+                {
+                    DisableButtons();
+                }
+                else
+                {
+                    EnableButtons();
                 }
                 label2.Text = "Current Turn: " + RoomData.CurrentTurn.Name;
             });
         }
-        private void DisableAlphabetButtons()
+        private void DisableButtons()
         {
             foreach (Control ctrl in panel1.Controls)
             {
@@ -220,6 +229,18 @@ namespace Client
                 {
                     btn.Enabled = false;
                 }
+            }
+        }
+        private void EnableButtons()
+        {
+            foreach (Control ctrl in panel1.Controls)
+            {
+                string ButtonText = ctrl.Text[0].ToString().ToLower();
+                if (ctrl is Button btn && !RoomData.ReveledLetters.Contains(ButtonText[0]))
+                {
+                    btn.Enabled = true;
+                }
+
             }
         }
         private void Game_Leave(object sender, EventArgs e)
