@@ -25,9 +25,9 @@
                     while (true)
                     {
                         string response = Connection.ReadFromServer.ReadString();
-
+                        
                         ProcessedEvent eventResult = EventProcessor.ProcessEvent(response);
-
+                        
                         switch (eventResult.Event)
                         {
 

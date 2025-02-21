@@ -9,6 +9,7 @@ namespace Client
         public static BinaryReader ReadFromServer;
         static BinaryWriter WriteToServer;
         public static string Username { get; private set; }
+        public static int ClientID { get; set; }
 
         public void ConnectToServer(string username)
         {

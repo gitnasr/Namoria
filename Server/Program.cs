@@ -1,4 +1,5 @@
 ﻿using Server;
+using System.ComponentModel.Design;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
@@ -106,6 +107,7 @@ class GameServer
             client = new Client(id, guestUsername);
             clients[ClientConnection] = client;
         }
+        WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.CLIENT_ID, client.ID));
 
         Console.WriteLine($"{clients[ClientConnection].Name} has joined the Game.");
 
@@ -184,6 +186,8 @@ class GameServer
                                 Console.WriteLine($"{clients[ClientConnection].Name} joined room {roomID}.");
                                 Client NewPlayer = clients[ClientConnection];
                                 room.AddPlayer(NewPlayer);
+                                clients[ClientConnection].RoomID = roomID;
+
                                 string roomData = GetAllRoomData(roomID);
 
                                 BroadCastToEveryOneInARoom(PlayEvents.PLAYER_JOINED, roomID, roomData);
@@ -295,12 +299,107 @@ class GameServer
                             if (gameWon)
                             {
                                 BroadCastToEveryOneInARoom(PlayEvents.GAME_OVER, roomID, roomJson);
+                                Room currentRoom = room;
+
+                                string replayAskData = "";
+                                TcpClient hostClient = clients.FirstOrDefault(c => c.Value.ID == currentRoom.Host.ID).Key;
+                                if (hostClient != null)
+                                {
+                                    BinaryWriter writer = new BinaryWriter(hostClient.GetStream());
+                                    writer.Write(EventProcessor.SendEventWithData(PlayEvents.REPLAY_ASK, replayAskData));
+                                    writer.Flush();
+                                    Console.WriteLine($"Sent REPLAY_ASK to Host {currentRoom.Host.Name}");
+                                }
+                                if (currentRoom.Player2 != null)
+                                {
+                                    TcpClient player2Client = clients.FirstOrDefault(c => c.Value.ID == currentRoom.Player2.ID).Key;
+                                    if (player2Client != null)
+                                    {
+                                        BinaryWriter writer = new BinaryWriter(player2Client.GetStream());
+                                        writer.Write(EventProcessor.SendEventWithData(PlayEvents.REPLAY_ASK, replayAskData));
+                                        writer.Flush();
+                                        Console.WriteLine($"Sent REPLAY_ASK to Player2 {currentRoom.Player2.Name}");
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                    // New case
+                    case PlayEvents.REPLAY_RESPONSE:
+                        {
+                            // Data format: "playerID|YES" or "playerID|NO"
+                            string[] respParts = processedEvent.Data.Split('|');
+                            if (respParts.Length != 2)
+                                break;
+
+                            int respondingPlayer = int.Parse(respParts[0]);
+                            string responseStr = respParts[1].ToUpper();
+                            int roomID = clients[ClientConnection].RoomID;
+                            Room room = rooms.FirstOrDefault(r => r.roomID == roomID);
+                            if (room != null)
+                            {
+                                if (room.Host.ID == respondingPlayer)
+                                {
+                                    room.HostReplayResponse = responseStr;
+                                    if (room.HostReplayResponse != "YES")
+                                    {
+                                        TcpClient hostClient = clients.FirstOrDefault(c => c.Value.ID == room.Host.ID).Key;
+                                        if (hostClient != null)
+                                        {
+                                            BinaryWriter writer = new BinaryWriter(hostClient.GetStream());
+                                            writer.Write(EventProcessor.SendEventWithData(PlayEvents.KICK_EVERYONE, "Replay denied by host. Room closed."));
+                                            writer.Flush();
+                                        }
+                                        rooms.Remove(room);
+                                        Console.WriteLine("Replay denied by host. Room closed.");
+                                        break;
+                                    }
+                                }
+                                else if (room.Player2 != null && room.Player2.ID == respondingPlayer)
+                                {
+                                    room.PlayerReplayResponse = responseStr;
+                                    if (room.PlayerReplayResponse != "YES")
+                                    {
+                                        TcpClient player2Client = clients.FirstOrDefault(c => c.Value.ID == room.Player2.ID).Key;
+                                        if (player2Client != null)
+                                        {
+                                            BinaryWriter writer = new BinaryWriter(player2Client.GetStream());
+                                            writer.Write(EventProcessor.SendEventWithData(PlayEvents.KICK_EVERYONE, "Replay denied by you."));
+                                            writer.Flush();
+                                        }
+                                        room.Player2 = null;
+                                        string roomData = GetAllRoomData(roomID);
+                                        BroadCastToEveryOneInARoom(PlayEvents.ROOM_UPDATE, roomID, roomData);
+                                        Console.WriteLine("Replay denied by player2. Player2 removed from room.");
+                                        break;
+                                    }
+                                }
+                                else
+                                {
+                                    Console.WriteLine("all condition wrong ");
+                                }
+                                // Check if both responses are available (non-empty).
+                                if (!string.IsNullOrEmpty(room.HostReplayResponse) && !string.IsNullOrEmpty(room.PlayerReplayResponse))
+                                {
+                                    if (room.HostReplayResponse.Equals("YES", StringComparison.OrdinalIgnoreCase) &&
+                                        room.PlayerReplayResponse.Equals("YES", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        // Both agreed: reset the room.
+                                        Client winner = room.Host;
+                                        room.ResetRoom(winner);
+                                        string updatedRoomData = GetAllRoomData(roomID);
+                                        BroadCastToEveryOneInARoom(PlayEvents.REPLAY_UPDATE, roomID, updatedRoomData);
+                                        Console.WriteLine("Replay accepted. Room reset.");
+                                    }
+                                }
                             }
                             break;
                         }
 
+
                 }
             }
+            
         }
         catch
         {

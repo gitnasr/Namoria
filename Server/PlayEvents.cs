@@ -18,7 +18,11 @@
     ROOM_UPDATE,
     GAME_OVER,
     GAME_NOT_STARTED,
-    NOT_YOUR_TURN
+    NOT_YOUR_TURN,
+    REPLAY_ASK,
+    REPLAY_UPDATE,
+    REPLAY_RESPONSE,
+    CLIENT_ID
 }
 
 
@@ -26,7 +30,8 @@ public enum RoomState
 {
     WAITING,
     PLAYING,
-    END
+    END,
+    PENDING
 }
 public class ProcessedEvent
 {

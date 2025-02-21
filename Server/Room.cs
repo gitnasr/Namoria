@@ -8,6 +8,11 @@ public class Room
     private static int count = 0;
     private static Random random = new Random();
     private static readonly object countLock = new object();
+
+    public string HostReplayResponse { get; set; }
+    public string PlayerReplayResponse { get; set; }
+    public string Category { get; set; }
+
     public int roomID { get; set; }
     public Client Host { get; set; }
     public Client? Player2 { get; set; }
@@ -20,6 +25,8 @@ public class Room
     {
         Watchers = new List<Client>();
         ReveledLetters = Array.Empty<char>();
+        HostReplayResponse = "";
+        PlayerReplayResponse = "";
     }
 
     public void AddWatcher(Client client)
@@ -37,6 +44,7 @@ public class Room
     {
         roomID = GetNextRoomId();
         Host = host;
+        Category = category;
         RandomWord = GenerateRandomWord(category);
         ReveledLetters = new char[RandomWord.Length];
 
@@ -48,6 +56,8 @@ public class Room
         Watchers = new List<Client>();
         RoomState = RoomState.WAITING;
         CurrentTurn = host;
+        HostReplayResponse = "";
+        PlayerReplayResponse = "";
     }
 
     private string GenerateRandomWord(string category)
@@ -130,5 +140,18 @@ public class Room
         {
             Watchers.Remove(client);
         }
+    }
+    public void ResetRoom(Client winner)
+    {
+        RandomWord = GenerateRandomWord(Category);
+        ReveledLetters = new char[RandomWord.Length];
+        for (int i = 0; i < ReveledLetters.Length; i++)
+        {
+            ReveledLetters[i] = '_';
+        }
+        CurrentTurn = winner;
+        HostReplayResponse = "";
+        PlayerReplayResponse = "";
+        RoomState = RoomState.PLAYING;
     }
 }

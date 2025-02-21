@@ -7,6 +7,8 @@ namespace Client
     {
 
         private List<Label> dashLabels = new List<Label>();
+        private object parsedEvent;
+
         private Room RoomData { get; set; }
         private int RoomID { get; set; }
 
@@ -118,6 +120,9 @@ namespace Client
 
                 switch (processedEvent.Event)
                 {
+                    case PlayEvents.CLIENT_ID:
+                        Connection.ClientID = int.Parse(processedEvent.Data);
+                        break;
                     case PlayEvents.PLAYER_JOINED:
                         {
                             if (RoomData.Player2 != null)
@@ -172,6 +177,21 @@ namespace Client
                             {
                                 MessageBox.Show("It is not your turn!");
                             });
+                            break;
+                        }
+                    case PlayEvents.REPLAY_ASK:
+                        {
+                            DialogResult result = MessageBox.Show("Do you want to replay?", "Replay Request",MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                            string reply = result == DialogResult.Yes ? "YES" : "NO";
+                            int myID = Connection.ClientID;
+                            Connection.SendToServer(PlayEvents.REPLAY_RESPONSE, $"{myID}|{reply}");
+                            break;
+                        }
+                    case PlayEvents.REPLAY_UPDATE:
+                        {
+                            MessageBox.Show("Room has been reset for replay!\n" + processedEvent.Data);
+                            DeserlizeData(processedEvent.Data);
+                            UpdateGameStateUI();
                             break;
                         }
 
@@ -273,5 +293,7 @@ namespace Client
         {
 
         }
+
+
     }
 }

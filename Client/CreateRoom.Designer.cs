@@ -45,7 +45,7 @@
             label1.Location = new Point(0, 0);
             label1.Margin = new Padding(2, 0, 2, 0);
             label1.Name = "label1";
-            label1.Size = new Size(449, 65);
+            label1.Size = new Size(374, 54);
             label1.TabIndex = 0;
             label1.Text = "Create a New Room";
             label1.TextAlign = ContentAlignment.MiddleCenter;
@@ -56,14 +56,14 @@
             CategoriesTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             CategoriesTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             CategoriesTable.Dock = DockStyle.Top;
-            CategoriesTable.Location = new Point(0, 65);
+            CategoriesTable.Location = new Point(0, 54);
             CategoriesTable.Margin = new Padding(2);
             CategoriesTable.Name = "CategoriesTable";
-            CategoriesTable.Padding = new Padding(10);
+            CategoriesTable.Padding = new Padding(8);
             CategoriesTable.RowCount = 2;
             CategoriesTable.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             CategoriesTable.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            CategoriesTable.Size = new Size(552, 150);
+            CategoriesTable.Size = new Size(442, 120);
             CategoriesTable.TabIndex = 3;
             // 
             // BackButton
@@ -72,10 +72,10 @@
             BackButton.FlatAppearance.BorderSize = 0;
             BackButton.FlatStyle = FlatStyle.Flat;
             BackButton.ForeColor = SystemColors.Control;
-            BackButton.Location = new Point(278, 2);
+            BackButton.Location = new Point(223, 2);
             BackButton.Margin = new Padding(2);
             BackButton.Name = "BackButton";
-            BackButton.Size = new Size(271, 162);
+            BackButton.Size = new Size(217, 130);
             BackButton.TabIndex = 5;
             BackButton.Text = "Nvm, I Want to Join Existing Room";
             BackButton.UseVisualStyleBackColor = false;
@@ -90,7 +90,7 @@
             CreateRoomButton.Location = new Point(2, 2);
             CreateRoomButton.Margin = new Padding(2);
             CreateRoomButton.Name = "CreateRoomButton";
-            CreateRoomButton.Size = new Size(270, 162);
+            CreateRoomButton.Size = new Size(216, 130);
             CreateRoomButton.TabIndex = 6;
             CreateRoomButton.Text = "Let's Get this party started!";
             CreateRoomButton.UseVisualStyleBackColor = false;
@@ -104,20 +104,20 @@
             tableLayoutPanel2.Controls.Add(CreateRoomButton, 0, 0);
             tableLayoutPanel2.Controls.Add(BackButton, 1, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
-            tableLayoutPanel2.Location = new Point(0, 215);
+            tableLayoutPanel2.Location = new Point(0, 174);
             tableLayoutPanel2.Margin = new Padding(2);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel2.Size = new Size(552, 171);
+            tableLayoutPanel2.Size = new Size(442, 135);
             tableLayoutPanel2.TabIndex = 7;
             // 
             // CreateRoom
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(9, 18, 44);
-            ClientSize = new Size(552, 386);
+            ClientSize = new Size(442, 309);
             Controls.Add(tableLayoutPanel2);
             Controls.Add(CategoriesTable);
             Controls.Add(label1);
