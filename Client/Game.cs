@@ -17,7 +17,8 @@ namespace Client
         {
             RoomID = roomID;
             InitializeComponent();
-            label1.Text = $"Room ID: {roomID} ";
+            RoomIDLabel.Text = $"Room ID: {roomID} ";
+            WatcherCounterLabel.Text = "Watcher Count: 0";
             CreateAlphabetButtons();
 
         }
@@ -51,9 +52,9 @@ namespace Client
 
         private void DisplayDashes(string wordPlaceholder)
         {
-            //panel2.Controls.Clear();
-            //dashLabels.Clear();
-            int x = 10, y = 10, spacing = 10;
+            int spacing = 10;
+            int x = (panel2.Width - (wordPlaceholder.Length * (20 + spacing))) / 2;
+            int y = (panel2.Height - 20) / 2;
             for (int i = 0; i < wordPlaceholder.Length; i++)
             {
                 Label dashLabel = new Label();
@@ -71,8 +72,6 @@ namespace Client
 
         private void Game_Load(object sender, EventArgs e)
         {
-            watcherCount.Text = "Watcher Count: 0";
-            //
             Thread listenForEvents = new Thread(async () => await ListenForEventsAsync());
             listenForEvents.Start();
         }
@@ -82,15 +81,15 @@ namespace Client
             this.Invoke((MethodInvoker)delegate
             {
 
-                label2.Text = $"Player 2: {message}";
-                label3.Text = $"Host: {RoomData.Host.Name}";
+                Player2Label.Text = $"Player 2: {message}";
+                HostNameLabel.Text = $"Host: {RoomData.Host.Name}";
             });
         }
         private void UpdateUI(int count)
         {
             this.Invoke((MethodInvoker)delegate
             {
-                watcherCount.Text = $"Watcher Count: {count}";
+                WatcherCounterLabel.Text = $"Watcher Count: {count}";
             });
         }
         private async Task ListenForEventsAsync()
@@ -112,7 +111,7 @@ namespace Client
                             {
                                 UpdateGameStateUI();
                                 UpdateUI(RoomData.Player2.Name);
-                                
+
                             }
                         }
                         break;
