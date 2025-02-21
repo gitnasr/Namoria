@@ -15,10 +15,9 @@ class GameServer
 
     static void Main()
     {
-        TcpListener server = new TcpListener(IPAddress.Any, 5000);
+        TcpListener server = new TcpListener(IPAddress.Any, 4782);
         server.Start();
-        Console.WriteLine("Server started on port 5000...");
-        Console.WriteLine("Available Categories:");
+        Console.WriteLine("Server started on port 4782...");
         FetchFiles();
         while (true)
         {
@@ -106,8 +105,10 @@ class GameServer
             client = new Client(id, guestUsername);
             clients[ClientConnection] = client;
         }
+        // Get an ip address of the client from tcpclient
+        string clientIpAddress = ClientConnection.Client.RemoteEndPoint.ToString();
+        Console.WriteLine($"{clients[ClientConnection].Name} has joined the Game. With an IP {clientIpAddress}");
 
-        Console.WriteLine($"{clients[ClientConnection].Name} has joined the Game.");
 
         try
         {
@@ -118,8 +119,6 @@ class GameServer
                 switch (processedEvent.Event)
                 {
                     case PlayEvents.GET_CATEGORIES:
-                        Console.WriteLine($"{clients[ClientConnection].Name} requested categories.");
-                        lock (lockObj)
                         {
                             foreach (string category in Categories)
                             {
@@ -132,7 +131,6 @@ class GameServer
                     case PlayEvents.CREATE_ROOM:
                         {
                             string category = processedEvent.Data;
-                            Console.WriteLine($"Received CREATE_ROOM for category: {category}");
                             if (clients.ContainsKey(ClientConnection))
                             {
                                 Client host = clients[ClientConnection];
@@ -295,6 +293,9 @@ class GameServer
                             if (gameWon)
                             {
                                 BroadCastToEveryOneInARoom(PlayEvents.GAME_OVER, roomID, roomJson);
+                                // Function (Name, Loser)
+                                // Logs.txt, "PLAYERNAME "1", PLAYER2 "0" "//Save file
+
                             }
                             break;
                         }
@@ -319,6 +320,7 @@ class GameServer
         }
     }
 
+
     static void FetchFiles()
     {
         string? ExEPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -341,4 +343,5 @@ class GameServer
             Console.WriteLine($"Access Denied :{ex.Message}");
         }
     }
+
 }
