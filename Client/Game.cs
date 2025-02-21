@@ -12,42 +12,28 @@ namespace Client
 
         private string Message { get; set; }
 
+        List<Button> KeyboardButtons;
         public Game(int roomID)
         {
             RoomID = roomID;
             InitializeComponent();
-            label1.Text = $"Room ID: {roomID} - Game Started!";
+            label1.Text = $"Room ID: {roomID} ";
             CreateAlphabetButtons();
 
         }
 
 
-
         private void CreateAlphabetButtons()
         {
-            int x = 10, y = 10; // Positioning variables
-            int buttonWidth = 30, buttonHeight = 30;
-            int spacing = 5; // Space between buttons
-
-            for (char c = 'A'; c <= 'Z'; c++)
+            KeyboardButtons = new List<Button>
             {
-                Button btn = new Button();
-                btn.Text = c.ToString();
-                btn.Size = new Size(buttonWidth, buttonHeight);
-                btn.Location = new Point(x, y);
-                btn.Click += AlphabetButton_Click; // Attach event
-
-                panel1.Controls.Add(btn);
-
-                // Update X position for the next button
-                x += buttonWidth + spacing;
-
-                // Move to the next row if needed (e.g., after 13 buttons)
-                if (x + buttonWidth > panel1.Width)
-                {
-                    x = 10; // Reset X position
-                    y += buttonHeight + spacing; // Move to the next row
-                }
+                buttonQ, buttonW, buttonE, buttonR, buttonT, buttonY, buttonU, buttonI, buttonO, buttonP,
+                buttonA, buttonS, buttonD, buttonF, buttonG, buttonH, buttonJ, buttonK, buttonL,
+                buttonZ, buttonX, buttonC, buttonV, buttonB, buttonN, buttonM
+            };
+            foreach (var button in KeyboardButtons)
+            {
+                button.Click += AlphabetButton_Click;
             }
         }
 
@@ -86,6 +72,7 @@ namespace Client
         private void Game_Load(object sender, EventArgs e)
         {
             watcherCount.Text = "Watcher Count: 0";
+            //
             Thread listenForEvents = new Thread(async () => await ListenForEventsAsync());
             listenForEvents.Start();
         }
@@ -95,7 +82,8 @@ namespace Client
             this.Invoke((MethodInvoker)delegate
             {
 
-                label2.Text = message;
+                label2.Text = $"Player 2: {message}";
+                label3.Text = $"Host: {RoomData.Host.Name}";
             });
         }
         private void UpdateUI(int count)
@@ -124,6 +112,7 @@ namespace Client
                             {
                                 UpdateGameStateUI();
                                 UpdateUI(RoomData.Player2.Name);
+                                
                             }
                         }
                         break;
@@ -133,6 +122,7 @@ namespace Client
                             UpdateGameStateUI();
 
                             UpdateUI(RoomData.Watchers.Count);
+                            UpdateUI(RoomData.Player2.Name);
                         }
                         break;
                     case PlayEvents.KICK_EVERYONE:
@@ -217,7 +207,7 @@ namespace Client
                 {
                     EnableButtons();
                 }
-                label2.Text = "Current Turn: " + RoomData.CurrentTurn.Name;
+                toolStripStatusLabel1.Text = $"Current Turn: {RoomData.CurrentTurn.Name}";
             });
         }
         private void DisableButtons()
@@ -270,6 +260,11 @@ namespace Client
 
 
         private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
         {
 
         }
