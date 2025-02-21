@@ -56,10 +56,10 @@
             buttonT = new Button();
             buttonQ = new Button();
             panel2 = new Panel();
-            label1 = new Label();
-            label2 = new Label();
-            label3 = new Label();
-            watcherCount = new Label();
+            RoomIDLabel = new Label();
+            Player2Label = new Label();
+            HostNameLabel = new Label();
+            WatcherCounterLabel = new Label();
             panel3 = new Panel();
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
@@ -96,332 +96,363 @@
             panel1.Controls.Add(buttonR);
             panel1.Controls.Add(buttonT);
             panel1.Controls.Add(buttonQ);
-            panel1.Location = new Point(60, 194);
+            panel1.Location = new Point(13, 324);
             panel1.Margin = new Padding(2);
             panel1.Name = "panel1";
-            panel1.Size = new Size(525, 129);
+            panel1.Size = new Size(948, 161);
             panel1.TabIndex = 0;
             // 
             // buttonM
             // 
-            buttonM.Location = new Point(359, 91);
+            buttonM.Location = new Point(616, 107);
+            buttonM.Margin = new Padding(4);
             buttonM.Name = "buttonM";
-            buttonM.Size = new Size(36, 31);
+            buttonM.Size = new Size(45, 39);
             buttonM.TabIndex = 25;
             buttonM.Text = "M";
             buttonM.UseVisualStyleBackColor = true;
             // 
             // buttonN
             // 
-            buttonN.Location = new Point(317, 91);
+            buttonN.Location = new Point(563, 107);
+            buttonN.Margin = new Padding(4);
             buttonN.Name = "buttonN";
-            buttonN.Size = new Size(36, 31);
+            buttonN.Size = new Size(45, 39);
             buttonN.TabIndex = 24;
             buttonN.Text = "N";
             buttonN.UseVisualStyleBackColor = true;
             // 
             // buttonX
             // 
-            buttonX.Location = new Point(147, 91);
+            buttonX.Location = new Point(351, 107);
+            buttonX.Margin = new Padding(4);
             buttonX.Name = "buttonX";
-            buttonX.Size = new Size(36, 31);
+            buttonX.Size = new Size(45, 39);
             buttonX.TabIndex = 23;
             buttonX.Text = "X";
             buttonX.UseVisualStyleBackColor = true;
             // 
             // buttonC
             // 
-            buttonC.Location = new Point(189, 91);
+            buttonC.Location = new Point(403, 107);
+            buttonC.Margin = new Padding(4);
             buttonC.Name = "buttonC";
-            buttonC.Size = new Size(36, 31);
+            buttonC.Size = new Size(45, 39);
             buttonC.TabIndex = 22;
             buttonC.Text = "C";
             buttonC.UseVisualStyleBackColor = true;
             // 
             // buttonV
             // 
-            buttonV.Location = new Point(231, 91);
+            buttonV.Location = new Point(456, 107);
+            buttonV.Margin = new Padding(4);
             buttonV.Name = "buttonV";
-            buttonV.Size = new Size(36, 31);
+            buttonV.Size = new Size(45, 39);
             buttonV.TabIndex = 21;
             buttonV.Text = "V";
             buttonV.UseVisualStyleBackColor = true;
             // 
             // buttonB
             // 
-            buttonB.Location = new Point(273, 91);
+            buttonB.Location = new Point(508, 107);
+            buttonB.Margin = new Padding(4);
             buttonB.Name = "buttonB";
-            buttonB.Size = new Size(36, 31);
+            buttonB.Size = new Size(45, 39);
             buttonB.TabIndex = 20;
             buttonB.Text = "B";
             buttonB.UseVisualStyleBackColor = true;
             // 
             // buttonZ
             // 
-            buttonZ.Location = new Point(105, 91);
+            buttonZ.Location = new Point(298, 107);
+            buttonZ.Margin = new Padding(4);
             buttonZ.Name = "buttonZ";
-            buttonZ.Size = new Size(36, 31);
+            buttonZ.Size = new Size(45, 39);
             buttonZ.TabIndex = 19;
             buttonZ.Text = "Z";
             buttonZ.UseVisualStyleBackColor = true;
             // 
             // buttonJ
             // 
-            buttonJ.Location = new Point(315, 54);
+            buttonJ.Location = new Point(561, 61);
+            buttonJ.Margin = new Padding(4);
             buttonJ.Name = "buttonJ";
-            buttonJ.Size = new Size(36, 31);
+            buttonJ.Size = new Size(45, 39);
             buttonJ.TabIndex = 18;
             buttonJ.Text = "J";
             buttonJ.UseVisualStyleBackColor = true;
             // 
             // buttonK
             // 
-            buttonK.Location = new Point(357, 54);
+            buttonK.Location = new Point(613, 61);
+            buttonK.Margin = new Padding(4);
             buttonK.Name = "buttonK";
-            buttonK.Size = new Size(36, 31);
+            buttonK.Size = new Size(45, 39);
             buttonK.TabIndex = 17;
             buttonK.Text = "K";
             buttonK.UseVisualStyleBackColor = true;
             // 
             // buttonL
             // 
-            buttonL.Location = new Point(399, 54);
+            buttonL.Location = new Point(666, 61);
+            buttonL.Margin = new Padding(4);
             buttonL.Name = "buttonL";
-            buttonL.Size = new Size(36, 31);
+            buttonL.Size = new Size(45, 39);
             buttonL.TabIndex = 16;
             buttonL.Text = "L";
             buttonL.UseVisualStyleBackColor = true;
             // 
             // buttonH
             // 
-            buttonH.Location = new Point(273, 54);
+            buttonH.Location = new Point(508, 61);
+            buttonH.Margin = new Padding(4);
             buttonH.Name = "buttonH";
-            buttonH.Size = new Size(36, 31);
+            buttonH.Size = new Size(45, 39);
             buttonH.TabIndex = 15;
             buttonH.Text = "H";
             buttonH.UseVisualStyleBackColor = true;
             // 
             // buttonS
             // 
-            buttonS.Location = new Point(103, 54);
+            buttonS.Location = new Point(296, 61);
+            buttonS.Margin = new Padding(4);
             buttonS.Name = "buttonS";
-            buttonS.Size = new Size(36, 31);
+            buttonS.Size = new Size(45, 39);
             buttonS.TabIndex = 14;
             buttonS.Text = "S";
             buttonS.UseVisualStyleBackColor = true;
             // 
             // buttonD
             // 
-            buttonD.Location = new Point(145, 54);
+            buttonD.Location = new Point(348, 61);
+            buttonD.Margin = new Padding(4);
             buttonD.Name = "buttonD";
-            buttonD.Size = new Size(36, 31);
+            buttonD.Size = new Size(45, 39);
             buttonD.TabIndex = 13;
             buttonD.Text = "D";
             buttonD.UseVisualStyleBackColor = true;
             // 
             // buttonF
             // 
-            buttonF.Location = new Point(187, 54);
+            buttonF.Location = new Point(401, 61);
+            buttonF.Margin = new Padding(4);
             buttonF.Name = "buttonF";
-            buttonF.Size = new Size(36, 31);
+            buttonF.Size = new Size(45, 39);
             buttonF.TabIndex = 12;
             buttonF.Text = "F";
             buttonF.UseVisualStyleBackColor = true;
             // 
             // buttonG
             // 
-            buttonG.Location = new Point(229, 54);
+            buttonG.Location = new Point(453, 61);
+            buttonG.Margin = new Padding(4);
             buttonG.Name = "buttonG";
-            buttonG.Size = new Size(36, 31);
+            buttonG.Size = new Size(45, 39);
             buttonG.TabIndex = 11;
             buttonG.Text = "G";
             buttonG.UseVisualStyleBackColor = true;
             // 
             // buttonA
             // 
-            buttonA.Location = new Point(61, 54);
+            buttonA.Location = new Point(243, 61);
+            buttonA.Margin = new Padding(4);
             buttonA.Name = "buttonA";
-            buttonA.Size = new Size(36, 31);
+            buttonA.Size = new Size(45, 39);
             buttonA.TabIndex = 10;
             buttonA.Text = "A";
             buttonA.UseVisualStyleBackColor = true;
             // 
             // buttonU
             // 
-            buttonU.Location = new Point(293, 17);
+            buttonU.Location = new Point(533, 14);
+            buttonU.Margin = new Padding(4);
             buttonU.Name = "buttonU";
-            buttonU.Size = new Size(36, 31);
+            buttonU.Size = new Size(45, 39);
             buttonU.TabIndex = 9;
             buttonU.Text = "U";
             buttonU.UseVisualStyleBackColor = true;
             // 
             // buttonI
             // 
-            buttonI.Location = new Point(335, 17);
+            buttonI.Location = new Point(586, 14);
+            buttonI.Margin = new Padding(4);
             buttonI.Name = "buttonI";
-            buttonI.Size = new Size(36, 31);
+            buttonI.Size = new Size(45, 39);
             buttonI.TabIndex = 8;
             buttonI.Text = "I";
             buttonI.UseVisualStyleBackColor = true;
             // 
             // buttonO
             // 
-            buttonO.Location = new Point(377, 17);
+            buttonO.Location = new Point(638, 14);
+            buttonO.Margin = new Padding(4);
             buttonO.Name = "buttonO";
-            buttonO.Size = new Size(36, 31);
+            buttonO.Size = new Size(45, 39);
             buttonO.TabIndex = 7;
             buttonO.Text = "O";
             buttonO.UseVisualStyleBackColor = true;
             // 
             // buttonP
             // 
-            buttonP.Location = new Point(419, 17);
+            buttonP.Location = new Point(691, 14);
+            buttonP.Margin = new Padding(4);
             buttonP.Name = "buttonP";
-            buttonP.Size = new Size(36, 31);
+            buttonP.Size = new Size(45, 39);
             buttonP.TabIndex = 6;
             buttonP.Text = "P";
             buttonP.UseVisualStyleBackColor = true;
             // 
             // buttonY
             // 
-            buttonY.Location = new Point(251, 17);
+            buttonY.Location = new Point(481, 14);
+            buttonY.Margin = new Padding(4);
             buttonY.Name = "buttonY";
-            buttonY.Size = new Size(36, 31);
+            buttonY.Size = new Size(45, 39);
             buttonY.TabIndex = 5;
             buttonY.Text = "Y";
             buttonY.UseVisualStyleBackColor = true;
             // 
             // buttonW
             // 
-            buttonW.Location = new Point(81, 17);
+            buttonW.Location = new Point(268, 14);
+            buttonW.Margin = new Padding(4);
             buttonW.Name = "buttonW";
-            buttonW.Size = new Size(36, 31);
+            buttonW.Size = new Size(45, 39);
             buttonW.TabIndex = 4;
             buttonW.Text = "W";
             buttonW.UseVisualStyleBackColor = true;
             // 
             // buttonE
             // 
-            buttonE.Location = new Point(123, 17);
+            buttonE.Location = new Point(321, 14);
+            buttonE.Margin = new Padding(4);
             buttonE.Name = "buttonE";
-            buttonE.Size = new Size(36, 31);
+            buttonE.Size = new Size(45, 39);
             buttonE.TabIndex = 3;
             buttonE.Text = "E";
             buttonE.UseVisualStyleBackColor = true;
             // 
             // buttonR
             // 
-            buttonR.Location = new Point(165, 17);
+            buttonR.Location = new Point(373, 14);
+            buttonR.Margin = new Padding(4);
             buttonR.Name = "buttonR";
-            buttonR.Size = new Size(36, 31);
+            buttonR.Size = new Size(45, 39);
             buttonR.TabIndex = 2;
             buttonR.Text = "R";
             buttonR.UseVisualStyleBackColor = true;
             // 
             // buttonT
             // 
-            buttonT.Location = new Point(207, 17);
+            buttonT.Location = new Point(426, 14);
+            buttonT.Margin = new Padding(4);
             buttonT.Name = "buttonT";
-            buttonT.Size = new Size(36, 31);
+            buttonT.Size = new Size(45, 39);
             buttonT.TabIndex = 1;
             buttonT.Text = "T";
             buttonT.UseVisualStyleBackColor = true;
             // 
             // buttonQ
             // 
-            buttonQ.Location = new Point(39, 17);
+            buttonQ.Location = new Point(216, 14);
+            buttonQ.Margin = new Padding(4);
             buttonQ.Name = "buttonQ";
-            buttonQ.Size = new Size(36, 31);
+            buttonQ.Size = new Size(45, 39);
             buttonQ.TabIndex = 0;
             buttonQ.Text = "Q";
             buttonQ.UseVisualStyleBackColor = true;
             // 
             // panel2
             // 
-            panel2.Location = new Point(116, 128);
+            panel2.Location = new Point(13, 171);
             panel2.Margin = new Padding(2);
             panel2.Name = "panel2";
-            panel2.Size = new Size(381, 62);
+            panel2.Size = new Size(948, 78);
             panel2.TabIndex = 1;
             // 
-            // label1
+            // RoomIDLabel
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(17, 32);
-            label1.Margin = new Padding(2, 0, 2, 0);
-            label1.Name = "label1";
-            label1.Size = new Size(68, 20);
-            label1.TabIndex = 1;
-            label1.Text = "Room ID";
+            RoomIDLabel.AutoSize = true;
+            RoomIDLabel.Location = new Point(21, 40);
+            RoomIDLabel.Margin = new Padding(2, 0, 2, 0);
+            RoomIDLabel.Name = "RoomIDLabel";
+            RoomIDLabel.Size = new Size(83, 25);
+            RoomIDLabel.TabIndex = 1;
+            RoomIDLabel.Text = "Room ID";
             // 
-            // label2
+            // Player2Label
             // 
-            label2.AutoSize = true;
-            label2.Location = new Point(17, 52);
-            label2.Margin = new Padding(2, 0, 2, 0);
-            label2.Name = "label2";
-            label2.Size = new Size(133, 20);
-            label2.TabIndex = 2;
-            label2.Text = "Player 2 : Unknown";
+            Player2Label.AutoSize = true;
+            Player2Label.Location = new Point(21, 65);
+            Player2Label.Margin = new Padding(2, 0, 2, 0);
+            Player2Label.Name = "Player2Label";
+            Player2Label.Size = new Size(148, 25);
+            Player2Label.TabIndex = 2;
+            Player2Label.Text = "Player 2 : Waiting";
             // 
-            // label3
+            // HostNameLabel
             // 
-            label3.AutoSize = true;
-            label3.Location = new Point(17, 12);
-            label3.Margin = new Padding(2, 0, 2, 0);
-            label3.Name = "label3";
-            label3.Size = new Size(79, 20);
-            label3.TabIndex = 3;
-            label3.Text = "Host : YOU";
+            HostNameLabel.AutoSize = true;
+            HostNameLabel.Location = new Point(21, 15);
+            HostNameLabel.Margin = new Padding(2, 0, 2, 0);
+            HostNameLabel.Name = "HostNameLabel";
+            HostNameLabel.Size = new Size(99, 25);
+            HostNameLabel.TabIndex = 3;
+            HostNameLabel.Text = "Host : YOU";
             // 
-            // watcherCount
+            // WatcherCounterLabel
             // 
-            watcherCount.AutoSize = true;
-            watcherCount.Location = new Point(17, 72);
-            watcherCount.Margin = new Padding(2, 0, 2, 0);
-            watcherCount.Name = "watcherCount";
-            watcherCount.Size = new Size(106, 20);
-            watcherCount.TabIndex = 4;
-            watcherCount.Text = "Watcher Count";
+            WatcherCounterLabel.AutoSize = true;
+            WatcherCounterLabel.Location = new Point(21, 90);
+            WatcherCounterLabel.Margin = new Padding(2, 0, 2, 0);
+            WatcherCounterLabel.Name = "WatcherCounterLabel";
+            WatcherCounterLabel.Size = new Size(129, 25);
+            WatcherCounterLabel.TabIndex = 4;
+            WatcherCounterLabel.Text = "Watcher Count";
             // 
             // panel3
             // 
-            panel3.Controls.Add(label1);
-            panel3.Controls.Add(watcherCount);
-            panel3.Controls.Add(label2);
-            panel3.Controls.Add(label3);
-            panel3.Location = new Point(12, 12);
+            panel3.Controls.Add(RoomIDLabel);
+            panel3.Controls.Add(WatcherCounterLabel);
+            panel3.Controls.Add(Player2Label);
+            panel3.Controls.Add(HostNameLabel);
+            panel3.Location = new Point(725, 13);
+            panel3.Margin = new Padding(4);
             panel3.Name = "panel3";
-            panel3.Size = new Size(218, 111);
+            panel3.Size = new Size(236, 121);
             panel3.TabIndex = 6;
             // 
             // statusStrip1
             // 
             statusStrip1.ImageScalingSize = new Size(20, 20);
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            statusStrip1.Location = new Point(0, 334);
+            statusStrip1.Location = new Point(0, 497);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(691, 26);
+            statusStrip1.Padding = new Padding(1, 0, 18, 0);
+            statusStrip1.Size = new Size(972, 32);
             statusStrip1.TabIndex = 7;
             statusStrip1.Text = "statusStrip1";
             // 
             // toolStripStatusLabel1
             // 
             toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            toolStripStatusLabel1.Size = new Size(153, 20);
+            toolStripStatusLabel1.Size = new Size(183, 25);
             toolStripStatusLabel1.Text = "Waiting for a Partener";
             // 
             // Game
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(691, 360);
+            ClientSize = new Size(972, 529);
             Controls.Add(statusStrip1);
             Controls.Add(panel3);
             Controls.Add(panel2);
             Controls.Add(panel1);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             Margin = new Padding(2);
+            MaximizeBox = false;
             Name = "Game";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Game";
             FormClosing += Game_FormClosing;
             Load += Game_Load;
@@ -439,10 +470,10 @@
 
         private Panel panel1;
         private Panel panel2;
-        private Label label1;
-        private Label label2;
-        private Label label3;
-        private Label watcherCount;
+        private Label RoomIDLabel;
+        private Label Player2Label;
+        private Label HostNameLabel;
+        private Label WatcherCounterLabel;
         private Panel panel3;
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel toolStripStatusLabel1;
