@@ -7,12 +7,11 @@ namespace Client
     {
 
         private List<Label> dashLabels = new List<Label>();
-        private Room RoomData { get; set; }
+        private Room RoomData { get; set; } = new Room();
         private int RoomID { get; set; }
 
-        private string Message { get; set; }
 
-        List<Button> KeyboardButtons;
+        List<Button> KeyboardButtons = new List<Button>();
         public Game(int roomID)
         {
             RoomID = roomID;
@@ -27,26 +26,27 @@ namespace Client
         private void CreateAlphabetButtons()
         {
             KeyboardButtons = new List<Button>
-            {
-                buttonQ, buttonW, buttonE, buttonR, buttonT, buttonY, buttonU, buttonI, buttonO, buttonP,
-                buttonA, buttonS, buttonD, buttonF, buttonG, buttonH, buttonJ, buttonK, buttonL,
-                buttonZ, buttonX, buttonC, buttonV, buttonB, buttonN, buttonM
-            };
+                {
+                    buttonQ, buttonW, buttonE, buttonR, buttonT, buttonY, buttonU, buttonI, buttonO, buttonP,
+                    buttonA, buttonS, buttonD, buttonF, buttonG, buttonH, buttonJ, buttonK, buttonL,
+                    buttonZ, buttonX, buttonC, buttonV, buttonB, buttonN, buttonM
+                };
             foreach (var button in KeyboardButtons)
             {
                 button.Click += AlphabetButton_Click;
             }
         }
 
-        private void AlphabetButton_Click(object sender, EventArgs e)
+        private void AlphabetButton_Click(object? sender, EventArgs e)
         {
-            Button clickedButton = sender as Button;
+            Button? clickedButton = sender as Button;
+            if (clickedButton == null)
+            {
+                return;
+            }
             char clickedChar = char.ToLower(clickedButton.Text[0]);
 
             Connection.SendToServer(PlayEvents.GUESS_LETTER, $"{RoomID}|{clickedChar}");
-
-
-
         }
 
 
@@ -113,6 +113,11 @@ namespace Client
                                 UpdateUI(RoomData.Player2.Name);
 
                             }
+                            else
+                            {
+
+                                UpdateUI("Waiting ...");
+                            }
                         }
                         break;
 
@@ -121,7 +126,14 @@ namespace Client
                             UpdateGameStateUI();
 
                             UpdateUI(RoomData.Watchers.Count);
-                            UpdateUI(RoomData.Player2.Name);
+                            if (RoomData.Player2 != null)
+                            {
+                                UpdateUI(RoomData.Player2.Name);
+                            }
+                            else
+                            {
+                                UpdateUI("Waiting ...");
+                            }
                         }
                         break;
                     case PlayEvents.KICK_EVERYONE:
@@ -141,8 +153,15 @@ namespace Client
                             this.Invoke((MethodInvoker)delegate
                             {
 
-                                MessageBox.Show("Game Over! Winner: " + RoomData.CurrentTurn.Name);
                                 DisableButtons();
+                                DialogResult result = MessageBox.Show($"{(Connection.Username == RoomData?.CurrentTurn?.Name ? $"Winner! {RoomData.CurrentTurn.Name}" : "Hard Luck")} \n Wanna Play Again", "Game Over", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                                string reply = result == DialogResult.Yes ? "YES" : "NO";
+                                int myID = Connection.ConnectionID;
+                                Connection.SendToServer(PlayEvents.REPLAY_RESPONSE, $"{myID}|{reply}");
+                                if (reply == "NO")
+                                {
+                                    Application.Exit();
+                                }
                             });
                             break;
                         }
@@ -163,6 +182,13 @@ namespace Client
                             });
                             break;
                         }
+                    case PlayEvents.REPLAY_UPDATE:
+                        {
+                            MessageBox.Show("Room has been reset for replay!\n" + processedEvent.Data);
+                            DeserlizeData(processedEvent.Data);
+                            UpdateGameStateUI();
+                            break;
+                        }
 
                 }
             }
@@ -171,10 +197,18 @@ namespace Client
         }
         private void UpdateGameStateUI()
         {
-            this.Invoke((MethodInvoker)delegate
+            if (this.IsDisposed || !this.IsHandleCreated)
+            {
+                return;
+            }
+
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate { UpdateGameStateUI(); });
+            }
+            else
             {
                 // kol ma el kelma gets revealed, no of dashes will decrease so i need to check over their count 
-
                 if (dashLabels.Count != RoomData.ReveledLetters.Length)
                 {
                     DisplayDashes(new string(RoomData.ReveledLetters));
@@ -198,7 +232,7 @@ namespace Client
                         }
                     }
                 }
-                if (RoomData.CurrentTurn.Name != Connection.Username)
+                if (RoomData?.CurrentTurn?.Name != Connection.Username)
                 {
                     DisableButtons();
                 }
@@ -206,9 +240,10 @@ namespace Client
                 {
                     EnableButtons();
                 }
-                toolStripStatusLabel1.Text = $"Current Turn: {RoomData.CurrentTurn.Name}";
-            });
+                toolStripStatusLabel1.Text = $"Current Turn: {RoomData?.CurrentTurn?.Name}";
+            }
         }
+
         private void DisableButtons()
         {
             foreach (Control ctrl in panel1.Controls)
@@ -247,13 +282,16 @@ namespace Client
         {
             try
             {
-                Room room = JsonSerializer.Deserialize<Room>(data);
-                RoomData = room;
+                Room? room = JsonSerializer.Deserialize<Room>(data);
+                if (room != null)
+                {
+                    RoomData = room;
+                }
+
             }
             catch (Exception)
             {
 
-                Message = data;
             }
         }
 
