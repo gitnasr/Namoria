@@ -7,12 +7,13 @@ namespace Client
     {
         private readonly static string DDNS_ADDRESS = "gitnasr.ddns.net";
         private readonly static string FALLBACK_ADDRESS = "127.0.0.1";
-        private static NetworkStream StreamFromNetwork;
+        private static NetworkStream StreamFromNetwork = default!;
         private static TcpClient client = new TcpClient(GetConnectionAddress(), 4782);
-        public static BinaryReader ReadFromServer;
-        static BinaryWriter WriteToServer;
-        public static string ConnectionType { get; private set; }
-        public static string Username { get; private set; }
+        public static BinaryReader ReadFromServer = default!;
+        static BinaryWriter WriteToServer = default!;
+        public static string ConnectionType { get; private set; } = "";
+        public static string Username { get; private set; } = "";
+        public static int ConnectionID { get; private set; }
         static string GetConnectionAddress()
         {
             try
@@ -33,7 +34,7 @@ namespace Client
             ConnectionType = "Only through this pc";
             return FALLBACK_ADDRESS;
         }
-        public void ConnectToServer(string username)
+        public async Task ConnectToServer(string username)
         {
             try
             {
@@ -43,6 +44,12 @@ namespace Client
                 WriteToServer = new BinaryWriter(StreamFromNetwork);
                 // THIS IS FIRST EVENT THAT CAUSE THE SERVER GOES INTO LOOP on a Thread
                 WriteToServer.Write(Username);
+
+                ProcessedEvent EventWithID = new ProcessedEvent();
+                EventWithID = EventProcessor.ProcessEvent(await Task.Run(() => ReadFromServer.ReadString()));
+                ConnectionID = int.Parse(EventWithID.Data);
+
+
             }
             catch (Exception ex)
             {
@@ -56,7 +63,7 @@ namespace Client
                     throw;
             }
         }
-        public static void SendToServer(PlayEvents playEvent, object data = null)
+        public static void SendToServer(PlayEvents playEvent, object? data = null)
         {
             if (data == null)
                 WriteToServer.Write(EventProcessor.EventAsSting(playEvent));

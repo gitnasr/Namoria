@@ -2,9 +2,9 @@
 {
     public partial class CreateRoom : Form
     {
-        private string SelectedCategory;
+        private string? SelectedCategory;
         private Form parentForm;
-        Connection connection = new Connection();
+
 
         public CreateRoom(Form ParentForm)
         {
@@ -17,7 +17,7 @@
         {
             try
             {
-                await Task.Run(async () =>
+                await Task.Run(() =>
                 {
 
                     Connection.SendToServer(PlayEvents.GET_CATEGORIES);
@@ -76,9 +76,9 @@
 
         }
 
-        private void RadioButton_Click(object sender, EventArgs e)
+        private void RadioButton_Click(object? sender, EventArgs e)
         {
-            RadioButton radioButton = (RadioButton)sender;
+            RadioButton radioButton = (RadioButton)sender!;
             SelectedCategory = radioButton.Text;
         }
 
@@ -129,7 +129,16 @@
 
         private void CreateRoom_FormClosed(object sender, FormClosedEventArgs e)
         {
-            this.parentForm.Show();
+            if (this.parentForm != null)
+            {
+
+                parentForm.Show();
+
+            }
+            else
+            {
+                Application.Exit();
+            }
 
         }
     }

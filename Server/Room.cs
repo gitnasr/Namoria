@@ -16,10 +16,19 @@ public class Room
     public RoomState RoomState { get; set; }
     public Client? CurrentTurn { get; set; }
     public char[] ReveledLetters { get; set; }
+
+    public bool HostAcceptedReplay { get; set; }
+    public bool Player2AcceptedReplay { get; set; }
+
+    public string Category { get; set; }
+
+
     public Room()
     {
         Watchers = new List<Client>();
         ReveledLetters = Array.Empty<char>();
+
+
     }
 
     public void AddWatcher(Client client)
@@ -35,9 +44,10 @@ public class Room
     }
     public Room(Client host, string category)
     {
+        Category = category;
         roomID = GetNextRoomId();
         Host = host;
-        RandomWord = GenerateRandomWord(category);
+        RandomWord = GenerateRandomWord();
         ReveledLetters = new char[RandomWord.Length];
 
         for (int i = 0; i < ReveledLetters.Length; i++)
@@ -48,12 +58,16 @@ public class Room
         Watchers = new List<Client>();
         RoomState = RoomState.WAITING;
         CurrentTurn = host;
+        HostAcceptedReplay = false;
+        Player2AcceptedReplay = false;
+
+
     }
 
-    private string GenerateRandomWord(string category)
+    private string GenerateRandomWord()
     {
         List<string> categories = new List<string>();
-        string filePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Categories", category + ".txt");
+        string filePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Categories", Category + ".txt");
         string[] words = File.ReadAllLines(filePath);
 
         if (words.Length == 0)
@@ -67,11 +81,25 @@ public class Room
         Console.WriteLine(words[index]);
         return words[index];
     }
+    public void ResetRoom(Client winner)
+    {
+        RandomWord = GenerateRandomWord();
+        ReveledLetters = new char[RandomWord.Length];
+        for (int i = 0; i < ReveledLetters.Length; i++)
+        {
+            ReveledLetters[i] = '_';
+        }
+        CurrentTurn = winner;
 
+        RoomState = RoomState.WAITING;
+        HostAcceptedReplay = false;
+        Player2AcceptedReplay = false;
+
+    }
     public bool ProcessTurn(char guessedLetter, int playerID, out bool isCorrectGuess)
     {
         isCorrectGuess = false;
-        if (playerID != CurrentTurn.ID)
+        if (playerID != CurrentTurn?.ID)
         {
             return false;
         }
@@ -131,4 +159,5 @@ public class Room
             Watchers.Remove(client);
         }
     }
+
 }

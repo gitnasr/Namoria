@@ -30,7 +30,7 @@ namespace Client
             {
                 PlayerUsername = "Guest" + new Random().Next(1000, 9999);
             }
-            connection.ConnectToServer(PlayerUsername);
+            _ = connection.ConnectToServer(PlayerUsername);
 
 
 
