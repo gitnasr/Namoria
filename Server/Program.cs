@@ -31,7 +31,6 @@ class GameServer
     static void BroadCastToEveryOneInARoom(PlayEvents Command, int roomID, string data)
     {
 
-        Console.WriteLine($"Broadcasting {Command} to everyone in the room");
         Room? room = rooms.Find(r => r.roomID == roomID);
         if (room != null)
         {
@@ -61,7 +60,6 @@ class GameServer
             {
                 foreach (Client Watcher in room.Watchers)
                 {
-                    Console.WriteLine($"Sending to Watchers {Watcher.Name}");
                     TcpClient client = clients.FirstOrDefault(c => c.Value.ID == Watcher.ID).Key;
                     if (client != null)
                     {
@@ -385,7 +383,17 @@ class GameServer
                         }
                         break;
 
-
+                    case PlayEvents.SWITCH_TURNS:
+                        {
+                            int roomID = int.Parse(processedEvent.Data);
+                            Room? room = GetRoomById(roomID);
+                            if (room == null)
+                                break;
+                            room.switchTurn();
+                            string roomJson = GetRoomByIdAsJson(roomID);
+                            BroadCastToEveryOneInARoom(PlayEvents.ROOM_UPDATE, roomID, roomJson);
+                        }
+                        break;
 
 
                 }

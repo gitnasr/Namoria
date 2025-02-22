@@ -10,6 +10,8 @@ namespace Client
         private Room RoomData { get; set; } = new Room();
         private int RoomID { get; set; }
 
+        private int Timeout { get; set; } = 5;
+
 
         List<Button> KeyboardButtons = new List<Button>();
         public Game(int roomID)
@@ -226,13 +228,18 @@ namespace Client
                         }
                     }
                 }
-                if (RoomData?.CurrentTurn?.Name != Connection.Username)
+                if (RoomData?.CurrentTurn?.ID != Connection.ConnectionID)
                 {
                     DisableButtons();
+                    PlayTimeOutTimer.Stop();
                 }
                 else
                 {
+                    PlayTimeOutTimer.Start();
+                    Timeout = 5;
+                    TimeToGuessLabel.Text = $"00:0{Timeout}";
                     EnableButtons();
+
                 }
                 toolStripStatusLabel1.Text = $"Current Turn: {RoomData?.CurrentTurn?.Name}";
             }
@@ -298,6 +305,18 @@ namespace Client
         private void label3_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void ReplayTimeOut_Tick(object sender, EventArgs e)
+        {
+
+            Timeout--;
+            TimeToGuessLabel.Text = $"00:0{Timeout}";
+            if (Timeout == 0)
+            {
+                PlayTimeOutTimer.Stop();
+                Connection.SendToServer(PlayEvents.SWITCH_TURNS, RoomID);
+            }
         }
     }
 }
