@@ -182,13 +182,7 @@ namespace Client
                             });
                             break;
                         }
-                    case PlayEvents.REPLAY_UPDATE:
-                        {
-                            MessageBox.Show("Room has been reset for replay!\n" + processedEvent.Data);
-                            DeserlizeData(processedEvent.Data);
-                            UpdateGameStateUI();
-                            break;
-                        }
+
 
                 }
             }

@@ -5,15 +5,18 @@ namespace Client
 {
     class Connection
     {
+        public static string ConnectionType { get; private set; } = "";
+        public static string Username { get; private set; } = "";
+        public static int ConnectionID { get; private set; }
+
+
         private readonly static string DDNS_ADDRESS = "gitnasr.ddns.net";
         private readonly static string FALLBACK_ADDRESS = "127.0.0.1";
         private static NetworkStream StreamFromNetwork = default!;
         private static TcpClient client = new TcpClient(GetConnectionAddress(), 4782);
         public static BinaryReader ReadFromServer = default!;
         static BinaryWriter WriteToServer = default!;
-        public static string ConnectionType { get; private set; } = "";
-        public static string Username { get; private set; } = "";
-        public static int ConnectionID { get; private set; }
+
         static string GetConnectionAddress()
         {
             try
