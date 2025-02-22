@@ -80,6 +80,8 @@ namespace Client
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            Connection.CheckForUpdate();
+
             CreateRoomButton.Text += $" as {PlayerUsername} \n You can play {Connection.ConnectionType}";
             timer1.Start();
 

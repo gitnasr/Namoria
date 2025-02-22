@@ -114,7 +114,7 @@ public class Room
         }
         return true;
     }
-    public bool isWordRevealed()
+    public bool IsWordRevealed()
     {
         foreach (char c in ReveledLetters)
         {
@@ -123,7 +123,7 @@ public class Room
         }
         return true;
     }
-    public void switchTurn()
+    public void SwitchTurn()
     {
 
         if (CurrentTurn == Player2)
