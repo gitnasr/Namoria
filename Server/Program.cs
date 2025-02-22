@@ -12,6 +12,7 @@ class GameServer
     static object lockObj = new object();
     static int ClientsCount = 0;
     static readonly List<Room> rooms = new List<Room>();
+    static ScoreTracker scoreTracker = new ScoreTracker("scores.txt");
 
     static void Main()
     {
@@ -310,6 +311,9 @@ class GameServer
 
                             if (gameWon)
                             {
+                                string winnerName = room.CurrentTurn.Name;
+                                string loserName = room.CurrentTurn == room.Host ? room.Player2.Name : room.Host.Name;
+                                scoreTracker.RecordGame(winnerName, loserName);
                                 BroadCastToEveryOneInARoom(PlayEvents.GAME_OVER, roomID, roomJson);
 
                             }
@@ -337,7 +341,6 @@ class GameServer
                             // **HOST CASE: If host rejects replay, close the room**
                             if (room.Host.ID == ResponsePlayerID && PlayAgain != "YES")
                             {
-                                Console.WriteLine("Replay denied by host. Room closed.");
                                 BroadCastToEveryOneInARoom(PlayEvents.KICK_EVERYONE, roomID, "Replay denied by host. Room closed.");
                                 rooms.Remove(room);
                                 break;
