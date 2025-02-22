@@ -4,13 +4,13 @@
     {
         private readonly string filePath;
         private Dictionary<string, int> playerScores;
-        private List<(string player1, string player2)> gamePairs;
+        private HashSet<(string, string)> gamePairs;
 
         public ScoreTracker(string filePath)
         {
             this.filePath = filePath;
             this.playerScores = new Dictionary<string, int>();
-            this.gamePairs = new List<(string, string)>();
+            this.gamePairs = new HashSet<(string, string)>();
             LoadScores();
         }
 
@@ -20,7 +20,7 @@
             {
                 if (!File.Exists(filePath))
                 {
-                    File.Create(filePath).Close();
+                    File.WriteAllText(filePath, string.Empty);
                     return;
                 }
 
@@ -29,27 +29,24 @@
                 {
                     if (string.IsNullOrWhiteSpace(line)) continue;
 
-                    var players = line.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (players.Length == 2)
+                    var players = line.Split(',');
+                    if (players.Length != 2) continue;
+
+                    var player1Data = players[0].Trim().Split(' ');
+                    var player2Data = players[1].Trim().Split(' ');
+
+                    if (player1Data.Length < 2 || player2Data.Length < 2) continue;
+
+                    string player1 = player1Data[0];
+                    string player2 = player2Data[0];
+                    string score1Str = player1Data[1].Trim('"');
+                    string score2Str = player2Data[1].Trim('"');
+
+                    if (int.TryParse(score1Str, out int score1) && int.TryParse(score2Str, out int score2))
                     {
-                        var player1Parts = players[0].Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                        var player2Parts = players[1].Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-                        if (player1Parts.Length == 2 && player2Parts.Length == 2)
-                        {
-                            string player1Name = player1Parts[0];
-                            string player2Name = player2Parts[0];
-                            string score1Str = player1Parts[1].Trim('"');
-                            string score2Str = player2Parts[1].Trim('"');
-
-                            if (int.TryParse(score1Str, out int score1) &&
-                                int.TryParse(score2Str, out int score2))
-                            {
-                                playerScores[player1Name] = score1;
-                                playerScores[player2Name] = score2;
-                                gamePairs.Add((player1Name, player2Name));
-                            }
-                        }
+                        playerScores[player1] = score1;
+                        playerScores[player2] = score2;
+                        gamePairs.Add((player1, player2));
                     }
                 }
             }
@@ -61,56 +58,20 @@
             }
         }
 
-        private bool PlayersExist(string player1, string player2)
+        public void RecordGame(string winner, string loser)
         {
-            return gamePairs.Any(pair =>
-                (pair.player1 == player1 && pair.player2 == player2) ||
-                (pair.player1 == player2 && pair.player2 == player1));
-        }
-
-        private void UpdateExistingPair(string player1, string player2)
-        {
-            for (int i = 0; i < gamePairs.Count; i++)
-            {
-                if ((gamePairs[i].player1 == player1 && gamePairs[i].player2 == player2) ||
-                    (gamePairs[i].player1 == player2 && gamePairs[i].player2 == player1))
-                {
-                    gamePairs[i] = (player1, player2);
-                    return;
-                }
-            }
-        }
-
-        public void RecordGame(string winnerName, string loserName)
-        {
-            // Update winner's score
-            if (playerScores.ContainsKey(winnerName))
-            {
-                playerScores[winnerName]++;
-            }
+            if (playerScores.ContainsKey(winner))
+                playerScores[winner]++;
             else
-            {
-                playerScores[winnerName] = 1;
-            }
+                playerScores[winner] = 1;
 
-            // Ensure loser exists in dictionary
-            if (!playerScores.ContainsKey(loserName))
-            {
-                playerScores[loserName] = 0;
-            }
+            if (!playerScores.ContainsKey(loser))
+                playerScores[loser] = 0;
 
-            // Check if these players have played before
-            if (PlayersExist(winnerName, loserName))
-            {
-                UpdateExistingPair(winnerName, loserName);
-            }
-            else
-            {
-                gamePairs.Add((winnerName, loserName));
-            }
+            gamePairs.Add((winner, loser));
 
             SaveScores();
-            LogGameResult(winnerName, loserName);
+            Console.WriteLine($"Game recorded: {winner} won against {loser}");
         }
 
         private void SaveScores()
@@ -121,8 +82,11 @@
 
                 foreach (var pair in gamePairs)
                 {
-                    string player1Score = $"{pair.player1} \"{playerScores[pair.player1]}\"";
-                    string player2Score = $"{pair.player2} \"{playerScores[pair.player2]}\"";
+                    if (!playerScores.ContainsKey(pair.Item1) || !playerScores.ContainsKey(pair.Item2))
+                        continue;
+
+                    string player1Score = $"{pair.Item1} \"{playerScores[pair.Item1]}\"";
+                    string player2Score = $"{pair.Item2} \"{playerScores[pair.Item2]}\"";
                     lines.Add($"{player1Score}, {player2Score}");
                 }
 
@@ -132,12 +96,6 @@
             {
                 Console.WriteLine($"Error saving scores: {ex.Message}");
             }
-        }
-
-        private void LogGameResult(string winnerName, string loserName)
-        {
-            Console.WriteLine($"Game result logged: {winnerName} with score {playerScores[winnerName]} " +
-                             $"won against {loserName} with score {playerScores[loserName]}");
         }
 
         public Dictionary<string, int> GetAllScores()
