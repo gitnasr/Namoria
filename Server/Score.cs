@@ -4,13 +4,13 @@
     {
         private readonly string filePath;
         private Dictionary<string, int> playerScores;
-        private HashSet<(string player1, string player2)> playerPairs;
+        private List<(string player1, string player2)> gamePairs;
 
         public ScoreTracker(string filePath)
         {
             this.filePath = filePath;
             this.playerScores = new Dictionary<string, int>();
-            this.playerPairs = new HashSet<(string, string)>();
+            this.gamePairs = new List<(string, string)>();
             LoadScores();
         }
 
@@ -47,7 +47,7 @@
                             {
                                 playerScores[player1Name] = score1;
                                 playerScores[player2Name] = score2;
-                                playerPairs.Add((player1Name, player2Name));
+                                gamePairs.Add((player1Name, player2Name));
                             }
                         }
                     }
@@ -57,7 +57,27 @@
             {
                 Console.WriteLine($"Error loading scores: {ex.Message}");
                 playerScores.Clear();
-                playerPairs.Clear();
+                gamePairs.Clear();
+            }
+        }
+
+        private bool PlayersExist(string player1, string player2)
+        {
+            return gamePairs.Any(pair =>
+                (pair.player1 == player1 && pair.player2 == player2) ||
+                (pair.player1 == player2 && pair.player2 == player1));
+        }
+
+        private void UpdateExistingPair(string player1, string player2)
+        {
+            for (int i = 0; i < gamePairs.Count; i++)
+            {
+                if ((gamePairs[i].player1 == player1 && gamePairs[i].player2 == player2) ||
+                    (gamePairs[i].player1 == player2 && gamePairs[i].player2 == player1))
+                {
+                    gamePairs[i] = (player1, player2);
+                    return;
+                }
             }
         }
 
@@ -79,7 +99,15 @@
                 playerScores[loserName] = 0;
             }
 
-            playerPairs.Add((winnerName, loserName));
+            // Check if these players have played before
+            if (PlayersExist(winnerName, loserName))
+            {
+                UpdateExistingPair(winnerName, loserName);
+            }
+            else
+            {
+                gamePairs.Add((winnerName, loserName));
+            }
 
             SaveScores();
             LogGameResult(winnerName, loserName);
@@ -91,8 +119,7 @@
             {
                 var lines = new List<string>();
 
-                // Save each unique player pair on its own line
-                foreach (var pair in playerPairs)
+                foreach (var pair in gamePairs)
                 {
                     string player1Score = $"{pair.player1} \"{playerScores[pair.player1]}\"";
                     string player2Score = $"{pair.player2} \"{playerScores[pair.player2]}\"";
