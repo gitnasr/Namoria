@@ -9,6 +9,14 @@ namespace Client
         public static string Username { get; private set; } = "";
         public static int ConnectionID { get; private set; }
 
+        private string CurrentVersion = "...";
+
+        public static void CheckForUpdate()
+        {
+
+            //MessageBox.Show("Downloading a New Updated");
+            //Application.Exit();
+        }
 
         private readonly static string DDNS_ADDRESS = "gitnasr.ddns.net";
         private readonly static string FALLBACK_ADDRESS = "127.0.0.1";
@@ -39,6 +47,7 @@ namespace Client
         }
         public async Task ConnectToServer(string username)
         {
+
             try
             {
                 Username = username;
