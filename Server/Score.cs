@@ -73,6 +73,7 @@
                 playerScores[winnerName] = 1;
             }
 
+            // Ensure loser exists in dictionary
             if (!playerScores.ContainsKey(loserName))
             {
                 playerScores[loserName] = 0;
