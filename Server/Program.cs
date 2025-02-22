@@ -295,11 +295,11 @@ class GameServer
                             if (!validTurn)
                                 break;
 
-                            bool gameWon = room.isWordRevealed();
+                            bool gameWon = room.IsWordRevealed();
 
                             // If the guess was wrong, switch turns.
                             if (!isCorrectGuess)
-                                room.switchTurn();
+                                room.SwitchTurn();
 
 
 
@@ -389,7 +389,7 @@ class GameServer
                             Room? room = GetRoomById(roomID);
                             if (room == null)
                                 break;
-                            room.switchTurn();
+                            room.SwitchTurn();
                             string roomJson = GetRoomByIdAsJson(roomID);
                             BroadCastToEveryOneInARoom(PlayEvents.ROOM_UPDATE, roomID, roomJson);
                         }
