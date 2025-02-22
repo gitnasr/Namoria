@@ -309,9 +309,7 @@ class GameServer
 
                             if (gameWon)
                             {
-                                string winnerName = room.CurrentTurn.Name;
-                                string loserName = room.CurrentTurn == room.Host ? room.Player2.Name : room.Host.Name;
-                                scoreTracker.RecordGame(winnerName, loserName);
+                                scoreTracker.RecordGame(room.Host.Name, room.Player2.Name);
                                 BroadCastToEveryOneInARoom(PlayEvents.GAME_OVER, roomID, roomJson);
 
                             }

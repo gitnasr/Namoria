@@ -70,12 +70,17 @@ namespace Client
             }
         }
 
-
+        private void StopPlayTimer()
+        {
+            TimeToGuessLabel.Visible = false;
+            PlayTimeOutTimer.Stop();
+        }
 
         private void Game_Load(object sender, EventArgs e)
         {
             Thread listenForEvents = new Thread(async () => await ListenForEventsAsync());
             listenForEvents.Start();
+            TimeToGuessLabel.Visible = false;
         }
         private void UpdateUI(string message)
         {
@@ -156,10 +161,10 @@ namespace Client
                             {
 
                                 DisableButtons();
+                                StopPlayTimer();
                                 DialogResult result = MessageBox.Show($"{(Connection.Username == RoomData?.CurrentTurn?.Name ? $"Winner! {RoomData.CurrentTurn.Name}" : "Hard Luck")} \n Wanna Play Again", "Game Over", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                                 string reply = result == DialogResult.Yes ? "YES" : "NO";
-                                int myID = Connection.ConnectionID;
-                                Connection.SendToServer(PlayEvents.REPLAY_RESPONSE, $"{myID}|{reply}");
+                                Connection.SendToServer(PlayEvents.REPLAY_RESPONSE, $"{Connection.ConnectionID}|{reply}");
                                 if (reply == "NO")
                                 {
                                     Application.Exit();
@@ -228,10 +233,10 @@ namespace Client
                         }
                     }
                 }
-                if (RoomData?.CurrentTurn?.ID != Connection.ConnectionID)
+                if (RoomData?.CurrentTurn?.ID != Connection.ConnectionID || RoomData.RoomState == RoomState.WAITING)
                 {
                     DisableButtons();
-                    PlayTimeOutTimer.Stop();
+                    StopPlayTimer();
                 }
                 else
                 {
@@ -309,6 +314,10 @@ namespace Client
 
         private void ReplayTimeOut_Tick(object sender, EventArgs e)
         {
+            if (!TimeToGuessLabel.Visible)
+            {
+                TimeToGuessLabel.Visible = true;
+            }
 
             Timeout--;
             TimeToGuessLabel.Text = $"00:0{Timeout}";
