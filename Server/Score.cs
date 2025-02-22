@@ -4,11 +4,13 @@
     {
         private readonly string filePath;
         private Dictionary<string, int> playerScores;
+        private HashSet<(string player1, string player2)> playerPairs;
 
         public ScoreTracker(string filePath)
         {
             this.filePath = filePath;
             this.playerScores = new Dictionary<string, int>();
+            this.playerPairs = new HashSet<(string, string)>();
             LoadScores();
         }
 
@@ -28,16 +30,24 @@
                     if (string.IsNullOrWhiteSpace(line)) continue;
 
                     var players = line.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                    foreach (var player in players)
+                    if (players.Length == 2)
                     {
-                        var parts = player.Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                        if (parts.Length == 2)
+                        var player1Parts = players[0].Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        var player2Parts = players[1].Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                        if (player1Parts.Length == 2 && player2Parts.Length == 2)
                         {
-                            string name = parts[0];
-                            string scoreStr = parts[1].Trim('"');
-                            if (int.TryParse(scoreStr, out int score))
+                            string player1Name = player1Parts[0];
+                            string player2Name = player2Parts[0];
+                            string score1Str = player1Parts[1].Trim('"');
+                            string score2Str = player2Parts[1].Trim('"');
+
+                            if (int.TryParse(score1Str, out int score1) &&
+                                int.TryParse(score2Str, out int score2))
                             {
-                                playerScores[name] = score;
+                                playerScores[player1Name] = score1;
+                                playerScores[player2Name] = score2;
+                                playerPairs.Add((player1Name, player2Name));
                             }
                         }
                     }
@@ -47,6 +57,7 @@
             {
                 Console.WriteLine($"Error loading scores: {ex.Message}");
                 playerScores.Clear();
+                playerPairs.Clear();
             }
         }
 
@@ -62,11 +73,12 @@
                 playerScores[winnerName] = 1;
             }
 
-            // Ensure loser exists in dictionary
             if (!playerScores.ContainsKey(loserName))
             {
                 playerScores[loserName] = 0;
             }
+
+            playerPairs.Add((winnerName, loserName));
 
             SaveScores();
             LogGameResult(winnerName, loserName);
@@ -76,13 +88,17 @@
         {
             try
             {
-                // Convert all scores to the format: "PLAYER_NAME "SCORE""
-                var formattedScores = playerScores.Select(p => $"{p.Key} \"{p.Value}\"");
+                var lines = new List<string>();
 
-                // Join all scores with commas and write in a single line
-                string scoreLines = string.Join(", ", formattedScores);
+                // Save each unique player pair on its own line
+                foreach (var pair in playerPairs)
+                {
+                    string player1Score = $"{pair.player1} \"{playerScores[pair.player1]}\"";
+                    string player2Score = $"{pair.player2} \"{playerScores[pair.player2]}\"";
+                    lines.Add($"{player1Score}, {player2Score}");
+                }
 
-                File.WriteAllText(filePath, scoreLines);
+                File.WriteAllLines(filePath, lines);
             }
             catch (Exception ex)
             {
@@ -101,5 +117,4 @@
             return new Dictionary<string, int>(playerScores);
         }
     }
-
 }
