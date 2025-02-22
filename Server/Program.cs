@@ -312,22 +312,6 @@ class GameServer
                             {
                                 BroadCastToEveryOneInARoom(PlayEvents.GAME_OVER, roomID, roomJson);
 
-                                TcpClient hostClient = clients.FirstOrDefault(c => c.Value.ID == room.Host.ID).Key;
-                                TcpClient player2Client = clients.FirstOrDefault(c => c.Value.ID == room.Player2.ID).Key;
-                                if (hostClient != null)
-                                {
-                                    BinaryWriter writer = new BinaryWriter(hostClient.GetStream());
-                                }
-                                if (room.Player2 != null)
-                                {
-                                    if (player2Client != null)
-                                    {
-                                        BinaryWriter writer = new BinaryWriter(player2Client.GetStream());
-                                    }
-                                }
-
-
-
                             }
                         }
                         break;
