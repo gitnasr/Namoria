@@ -89,11 +89,8 @@ namespace Client
 
         private void JoinRoom(int RoomID)
         {
-
             Connection.SendToServer(PlayEvents.JOIN_ROOM, RoomID);
-
-            Form form = new Game(RoomID);
-
+            Game form = new Game(RoomID);
             form.Show();
             Hide();
 
@@ -137,9 +134,23 @@ namespace Client
 
         private void CreateRoomButton_Click(object sender, EventArgs e)
         {
-            Form form = new CreateRoom(this);
-            form.Show();
-            Hide();
+            timer1.Stop();
+            CreateRoom CreateRoomForm = new CreateRoom();
+            DialogResult result = CreateRoomForm.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                new Game(CreateRoomForm.RoomID).Show();
+                CreateRoomForm.Close();
+                Hide();
+
+            }
+            if (result == DialogResult.Cancel)
+            {
+                timer1.Start();
+            }
+
+
+
 
         }
 

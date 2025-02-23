@@ -35,7 +35,7 @@ public class Room
     {
         Watchers.Add(client);
     }
-    private static int GetNextRoomId()
+    private static int GetRoomID()
     {
         lock (countLock)
         {
@@ -45,7 +45,7 @@ public class Room
     public Room(Client host, string category)
     {
         Category = category;
-        roomID = GetNextRoomId();
+        roomID = GetRoomID();
         Host = host;
         RandomWord = GenerateRandomWord();
         ReveledLetters = new char[RandomWord.Length];

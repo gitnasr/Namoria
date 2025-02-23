@@ -5,12 +5,11 @@ namespace Client
     public partial class CreateRoom : Form
     {
         private string? SelectedCategory;
-        private Form parentForm;
 
+        public int RoomID { get; private set; }
 
-        public CreateRoom(Form ParentForm)
+        public CreateRoom()
         {
-            parentForm = ParentForm;
 
             InitializeComponent();
         }
@@ -48,28 +47,20 @@ namespace Client
 
         private void DisplayCategories(List<string> categories)
         {
-            int i = 0;
-            foreach (var category in categories)
+            ComboBox CategoriesMenu = CategoriesDropDown;
+            CategoriesMenu.Items.AddRange(categories.ToArray());
+
+            if (categories.Count > 0)
             {
-                RadioButton radioButton = new RadioButton();
-                radioButton.Text = category;
-                radioButton.Click += RadioButton_Click;
-                radioButton.AutoSize = true;
-                CategoriesTable.SetColumn(radioButton, i);
-                CategoriesTable.Controls.Add(radioButton);
-
-                i++;
-
+                CategoriesMenu.SelectedItem = categories[0];
+                SelectedCategory = categories[0];
             }
 
+            CategoriesMenu.SelectedIndexChanged += (sender, e) =>
+            {
+                SelectedCategory = CategoriesMenu.SelectedItem?.ToString();
+            };
         }
-
-        private void RadioButton_Click(object? sender, EventArgs e)
-        {
-            RadioButton radioButton = (RadioButton)sender!;
-            SelectedCategory = radioButton.Text;
-        }
-
 
 
 
@@ -98,10 +89,10 @@ namespace Client
                     MessageBox.Show("Error creating room", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-                Form GameForm = new Game(roomID);
 
-                GameForm.Show();
-                this.Hide();
+                RoomID = roomID;
+                DialogResult = DialogResult.OK;
+                this.Close();
             }
             else
             {
@@ -111,23 +102,10 @@ namespace Client
 
         private void BackButton_Click(object sender, EventArgs e)
         {
-            this.parentForm.Show();
-            this.Close();
+
+            this.DialogResult = DialogResult.Cancel;
         }
 
-        private void CreateRoom_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            if (this.parentForm != null)
-            {
 
-                parentForm.Show();
-
-            }
-            else
-            {
-                Application.Exit();
-            }
-
-        }
     }
 }
