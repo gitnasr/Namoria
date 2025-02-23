@@ -10,7 +10,7 @@ namespace Client
         private Room RoomData { get; set; } = new Room();
         private int RoomID { get; set; }
 
-        private int Timeout { get; set; } = 5;
+        private int Timeout { get; set; } = 6;
 
 
         List<Button> KeyboardButtons = new List<Button>();
