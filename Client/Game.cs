@@ -103,105 +103,74 @@ namespace Client
         }
         private async Task ListenForEventsAsync()
         {
-
-            while (true)
+            try
             {
-
-                string response = await Task.Run(() => Connection.ReadFromServer.ReadString());
-                ProcessedEvent processedEvent = EventProcessor.ProcessEvent(response);
-
-                DeserlizeData(processedEvent.Data);
-
-                switch (processedEvent.Event)
+                while (true)
                 {
-                    case PlayEvents.PLAYER_JOINED:
-                        {
-                            if (RoomData.Player2 != null)
+
+                    string response = await Task.Run(() => Connection.ReadFromServer.ReadString());
+                    ProcessedEvent processedEvent = EventProcessor.ProcessEvent(response);
+
+                    DeserlizeData(processedEvent.Data);
+
+                    switch (processedEvent.Event)
+                    {
+                        case PlayEvents.PLAYER_JOINED:
                             {
                                 UpdateGameStateUI();
-                                UpdateUI(RoomData.Player2.Name);
-
+                                UpdateUI(RoomData.Player2?.Name ?? "Waiting ...");
                             }
-                            else
-                            {
-
-                                UpdateUI("Waiting ...");
-                            }
-                        }
-                        break;
-
-                    case PlayEvents.WATCH_ROOM:
-                        {
-                            UpdateGameStateUI();
-
-                            UpdateUI(RoomData.Watchers.Count);
-                            if (RoomData.Player2 != null)
-                            {
-                                UpdateUI(RoomData.Player2.Name);
-                            }
-                            else
-                            {
-                                UpdateUI("Waiting ...");
-                            }
-                        }
-                        break;
-                    case PlayEvents.KICK_EVERYONE:
-                        {
-                            MessageBox.Show("You have been kicked out of the room!");
-                            Application.Exit();
-                        }
-                        break;
-                    case PlayEvents.ROOM_UPDATE:
-                        {
-                            UpdateGameStateUI();
                             break;
-                        }
 
-                    case PlayEvents.GAME_OVER:
-                        {
-                            this.Invoke((MethodInvoker)delegate
+                        case PlayEvents.WATCH_ROOM:
                             {
-
-                                DisableButtons();
-                                StopPlayTimer();
-                                StartReplayTimer();
-                                DialogResult result = MessageBox.Show($"{(Connection.Username == RoomData?.CurrentTurn?.Name ? $"Winner! {RoomData.CurrentTurn.Name}" : "Hard Luck")} \n Wanna Play Again", "Game Over", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                                string reply = result == DialogResult.Yes ? "YES" : "NO";
-                                Connection.SendToServer(PlayEvents.REPLAY_RESPONSE, $"{Connection.ConnectionID}|{reply}");
-                                if (reply == "NO")
-                                {
-                                    Application.Exit();
-                                }
-                                else
-                                {
-                                    ResetReplayTimer();
-                                }
-                            });
+                                UpdateGameStateUI();
+                                UpdateUI(RoomData.Watchers.Count);
+                                UpdateUI(RoomData.Player2?.Name ?? "Waiting ...");
+                            }
                             break;
-                        }
+                        case PlayEvents.KICK_EVERYONE:
+                            {
+                                MessageBox.Show("You have been kicked out of the room!");
+                                Application.Exit();
+                            }
+                            break;
+                        case PlayEvents.ROOM_UPDATE:
+                            {
+                                UpdateGameStateUI();
+                                break;
+                            }
 
-                    case PlayEvents.GAME_NOT_STARTED:
-                        {
-                            this.Invoke((MethodInvoker)delegate
+                        case PlayEvents.GAME_OVER:
+                            {
+                                this.Invoke((MethodInvoker)delegate
+                                {
+                                    HandleGameOver();
+                                });
+                                break;
+                            }
+
+                        case PlayEvents.GAME_NOT_STARTED:
                             {
                                 MessageBox.Show(processedEvent.Data);
-                            });
-                            break;
-                        }
-                    case PlayEvents.NOT_YOUR_TURN:
-                        {
-                            this.Invoke((MethodInvoker)delegate
+                                break;
+                            }
+                        case PlayEvents.NOT_YOUR_TURN:
                             {
                                 MessageBox.Show("It is not your turn!");
-                            });
-                            break;
-                        }
+                                break;
+                            }
 
 
+                    }
                 }
+
             }
-
-
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Connection error: {ex.Message}");
+                Application.Exit();
+            }
         }
         private void UpdateGameStateUI()
         {
@@ -357,4 +326,28 @@ namespace Client
             }
         }
     }
+    private void HandleGameOver()
+        {
+            DisableButtons();
+            StopPlayTimer();
+            StartReplayTimer();
+
+            DialogResult result = MessageBox.Show(
+                $"{(Connection.Username == RoomData?.CurrentTurn?.Name ? $"Winner! {RoomData.CurrentTurn.Name}" : "Hard Luck")} \n Wanna Play Again",
+                "Game Over", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            string reply = result == DialogResult.Yes ? "YES" : "NO";
+            Connection.SendToServer(PlayEvents.REPLAY_RESPONSE, $"{Connection.ConnectionID}|{reply}");
+
+            if (reply == "NO")
+            {
+                Application.Exit();
+            }
+            else
+            {
+                ResetReplayTimer();
+            }
+        }
+    }
+
 }
