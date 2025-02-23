@@ -154,10 +154,7 @@ namespace Client
 
         }
 
-        private void flowLayoutPanel2_Paint(object sender, PaintEventArgs e)
-        {
 
-        }
 
         private void Lobby_Leave(object sender, EventArgs e)
         {

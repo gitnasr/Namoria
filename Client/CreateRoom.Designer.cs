@@ -85,7 +85,6 @@
             Name = "CreateRoom";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Create Room";
-            FormClosed += CreateRoom_FormClosed;
             Load += CreateRoom_Load;
             ResumeLayout(false);
         }

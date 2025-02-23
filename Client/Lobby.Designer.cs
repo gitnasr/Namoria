@@ -88,7 +88,6 @@
             flowLayoutPanel2.Size = new Size(666, 574);
             flowLayoutPanel2.TabIndex = 6;
             flowLayoutPanel2.WrapContents = false;
-            flowLayoutPanel2.Paint += flowLayoutPanel2_Paint;
             // 
             // timer1
             // 
