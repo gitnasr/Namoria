@@ -190,15 +190,84 @@ class GameServer
                             if (room != null)
                             {
 
-                                Console.WriteLine($"{clients[ClientConnection].Name} joined room {roomID}.");
-                                Client NewPlayer = clients[ClientConnection];
-                                NewPlayer.RoomID = roomID; // FIXED A CRITICAL BUG
-                                room.AddPlayer(NewPlayer);
-                                string roomData = GetRoomByIdAsJson(roomID);
+                                Client host = room.Host;
 
-                                BroadCastToEveryOneInARoom(PlayEvents.PLAYER_JOINED, roomID, roomData);
+                                room.RoomState = RoomState.UNAVAILABLE;
+
+
+
+                                TcpClient hostClient = clients.FirstOrDefault(c => c.Value.ID == host.ID).Key;
+                                if (hostClient != null)
+                                {
+                                    NetworkStream HostStream = hostClient.GetStream();
+                                    BinaryWriter WriteToHost = new BinaryWriter(HostStream);
+                                    string PlayerName = clients[ClientConnection].Name;
+
+                                    WriteToHost.Write(EventProcessor.SendEventWithData(PlayEvents.JOIN_REQUEST, clients[ClientConnection].ID));
+                                }
+
+
 
                             }
+
+
+
+                        }
+                        break;
+
+                    case PlayEvents.JOIN_ACCEPTED:
+                        {
+                            // Data format: "roomID|playerId"
+
+                            string[] parts = processedEvent.Data.Split('|');
+                            if (parts.Length < 2)
+                                break;
+                            int playerId = int.Parse(parts[1]);
+                            int roomID = int.Parse(parts[0]);
+
+                            Room? room = rooms.Find(r => r.roomID == roomID);
+                            if (room != null)
+                            {
+                                // find new player from tcp 
+                                Client host = room.Host;
+                                Client NewPlayer = clients.FirstOrDefault(c => c.Value.ID == playerId).Value;
+                                NewPlayer.RoomID = roomID;
+                                room.AddPlayer(NewPlayer);
+
+
+                                // Send Specific Event to the new player to open the game form
+                                TcpClient NewPlayerClient = clients.FirstOrDefault(c => c.Value.ID == NewPlayer.ID).Key;
+                                if (NewPlayerClient != null)
+                                {
+                                    Console.WriteLine("Sending to Player 2");
+                                    NetworkStream NewPlayerStream = NewPlayerClient.GetStream();
+                                    BinaryWriter WriteToNewPlayer = new BinaryWriter(NewPlayerStream);
+                                    WriteToNewPlayer.Write(EventProcessor.SendEventWithData(PlayEvents.START_GAME, roomID));
+                                }
+                                string roomData = GetRoomByIdAsJson(roomID);
+                                BroadCastToEveryOneInARoom(PlayEvents.PLAYER_JOINED, roomID, roomData);
+                            }
+
+                        }
+                        break;
+                    case PlayEvents.DENY_ENTER:
+                        {
+                            // Data format: "roomID|playerId"
+                            string[] parts = processedEvent.Data.Split('|');
+                            if (parts.Length < 2)
+                                break;
+                            int playerId = int.Parse(parts[1]);
+                            int roomID = int.Parse(parts[0]);
+                            Room? room = rooms.Find(r => r.roomID == roomID);
+                            room.RoomState = RoomState.WAITING;
+                            TcpClient PlayerClient = clients.FirstOrDefault(c => c.Value.ID == playerId).Key;
+                            if (PlayerClient != null)
+                            {
+                                NetworkStream PlayerStream = PlayerClient.GetStream();
+                                BinaryWriter WriteToPlayer = new BinaryWriter(PlayerStream);
+                                WriteToPlayer.Write(EventProcessor.SendEventWithData(PlayEvents.REJECTED_JOIN, "Bara Yala"));
+                            }
+
 
 
                         }
