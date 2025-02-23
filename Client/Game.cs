@@ -12,6 +12,8 @@ namespace Client
 
         private int Timeout { get; set; } = 6;
 
+        private int ReplayTimeout { get; set; } = 10;
+
 
         List<Button> KeyboardButtons = new List<Button>();
         public Game(int roomID)
@@ -162,12 +164,17 @@ namespace Client
 
                                 DisableButtons();
                                 StopPlayTimer();
+                                StartReplayTimer();
                                 DialogResult result = MessageBox.Show($"{(Connection.Username == RoomData?.CurrentTurn?.Name ? $"Winner! {RoomData.CurrentTurn.Name}" : "Hard Luck")} \n Wanna Play Again", "Game Over", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                                 string reply = result == DialogResult.Yes ? "YES" : "NO";
                                 Connection.SendToServer(PlayEvents.REPLAY_RESPONSE, $"{Connection.ConnectionID}|{reply}");
                                 if (reply == "NO")
                                 {
                                     Application.Exit();
+                                }
+                                else
+                                {
+                                    ResetReplayTimer();
                                 }
                             });
                             break;
@@ -325,6 +332,28 @@ namespace Client
             {
                 PlayTimeOutTimer.Stop();
                 Connection.SendToServer(PlayEvents.SWITCH_TURNS, RoomID);
+            }
+        }
+        private void ResetReplayTimer()
+        {
+            ReplayTimeout = 10;
+            ReplayTimer.Stop();
+        }
+        private void StartReplayTimer()
+        {
+            ReplayTimer.Start();
+        }
+        private void ReplayTimer_Tick(object sender, EventArgs e)
+        {
+            ReplayTimeout--;
+            if (ReplayTimeout == 0)
+            {
+                ReplayTimer.Stop();
+                MessageBox.Show("You we idle for a long time, exiting ...");
+
+                Connection.SendToServer(PlayEvents.REPLAY_RESPONSE, $"{Connection.ConnectionID}|no");
+
+                Application.Exit();
             }
         }
     }

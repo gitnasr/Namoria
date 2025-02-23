@@ -66,6 +66,7 @@
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
             PlayTimeOutTimer = new System.Windows.Forms.Timer(components);
+            ReplayTimer = new System.Windows.Forms.Timer(components);
             panel1.SuspendLayout();
             panel3.SuspendLayout();
             statusStrip1.SuspendLayout();
@@ -100,7 +101,7 @@
             panel1.Controls.Add(buttonT);
             panel1.Controls.Add(buttonQ);
             panel1.Location = new Point(13, 324);
-            panel1.Margin = new Padding(2, 2, 2, 2);
+            panel1.Margin = new Padding(2);
             panel1.Name = "panel1";
             panel1.Size = new Size(948, 161);
             panel1.TabIndex = 0;
@@ -108,7 +109,7 @@
             // buttonM
             // 
             buttonM.Location = new Point(616, 107);
-            buttonM.Margin = new Padding(4, 4, 4, 4);
+            buttonM.Margin = new Padding(4);
             buttonM.Name = "buttonM";
             buttonM.Size = new Size(45, 39);
             buttonM.TabIndex = 25;
@@ -118,7 +119,7 @@
             // buttonN
             // 
             buttonN.Location = new Point(563, 107);
-            buttonN.Margin = new Padding(4, 4, 4, 4);
+            buttonN.Margin = new Padding(4);
             buttonN.Name = "buttonN";
             buttonN.Size = new Size(45, 39);
             buttonN.TabIndex = 24;
@@ -128,7 +129,7 @@
             // buttonX
             // 
             buttonX.Location = new Point(351, 107);
-            buttonX.Margin = new Padding(4, 4, 4, 4);
+            buttonX.Margin = new Padding(4);
             buttonX.Name = "buttonX";
             buttonX.Size = new Size(45, 39);
             buttonX.TabIndex = 23;
@@ -138,7 +139,7 @@
             // buttonC
             // 
             buttonC.Location = new Point(403, 107);
-            buttonC.Margin = new Padding(4, 4, 4, 4);
+            buttonC.Margin = new Padding(4);
             buttonC.Name = "buttonC";
             buttonC.Size = new Size(45, 39);
             buttonC.TabIndex = 22;
@@ -148,7 +149,7 @@
             // buttonV
             // 
             buttonV.Location = new Point(456, 107);
-            buttonV.Margin = new Padding(4, 4, 4, 4);
+            buttonV.Margin = new Padding(4);
             buttonV.Name = "buttonV";
             buttonV.Size = new Size(45, 39);
             buttonV.TabIndex = 21;
@@ -158,7 +159,7 @@
             // buttonB
             // 
             buttonB.Location = new Point(508, 107);
-            buttonB.Margin = new Padding(4, 4, 4, 4);
+            buttonB.Margin = new Padding(4);
             buttonB.Name = "buttonB";
             buttonB.Size = new Size(45, 39);
             buttonB.TabIndex = 20;
@@ -168,7 +169,7 @@
             // buttonZ
             // 
             buttonZ.Location = new Point(298, 107);
-            buttonZ.Margin = new Padding(4, 4, 4, 4);
+            buttonZ.Margin = new Padding(4);
             buttonZ.Name = "buttonZ";
             buttonZ.Size = new Size(45, 39);
             buttonZ.TabIndex = 19;
@@ -178,7 +179,7 @@
             // buttonJ
             // 
             buttonJ.Location = new Point(561, 61);
-            buttonJ.Margin = new Padding(4, 4, 4, 4);
+            buttonJ.Margin = new Padding(4);
             buttonJ.Name = "buttonJ";
             buttonJ.Size = new Size(45, 39);
             buttonJ.TabIndex = 18;
@@ -188,7 +189,7 @@
             // buttonK
             // 
             buttonK.Location = new Point(613, 61);
-            buttonK.Margin = new Padding(4, 4, 4, 4);
+            buttonK.Margin = new Padding(4);
             buttonK.Name = "buttonK";
             buttonK.Size = new Size(45, 39);
             buttonK.TabIndex = 17;
@@ -198,7 +199,7 @@
             // buttonL
             // 
             buttonL.Location = new Point(666, 61);
-            buttonL.Margin = new Padding(4, 4, 4, 4);
+            buttonL.Margin = new Padding(4);
             buttonL.Name = "buttonL";
             buttonL.Size = new Size(45, 39);
             buttonL.TabIndex = 16;
@@ -208,7 +209,7 @@
             // buttonH
             // 
             buttonH.Location = new Point(508, 61);
-            buttonH.Margin = new Padding(4, 4, 4, 4);
+            buttonH.Margin = new Padding(4);
             buttonH.Name = "buttonH";
             buttonH.Size = new Size(45, 39);
             buttonH.TabIndex = 15;
@@ -218,7 +219,7 @@
             // buttonS
             // 
             buttonS.Location = new Point(296, 61);
-            buttonS.Margin = new Padding(4, 4, 4, 4);
+            buttonS.Margin = new Padding(4);
             buttonS.Name = "buttonS";
             buttonS.Size = new Size(45, 39);
             buttonS.TabIndex = 14;
@@ -228,7 +229,7 @@
             // buttonD
             // 
             buttonD.Location = new Point(348, 61);
-            buttonD.Margin = new Padding(4, 4, 4, 4);
+            buttonD.Margin = new Padding(4);
             buttonD.Name = "buttonD";
             buttonD.Size = new Size(45, 39);
             buttonD.TabIndex = 13;
@@ -238,7 +239,7 @@
             // buttonF
             // 
             buttonF.Location = new Point(401, 61);
-            buttonF.Margin = new Padding(4, 4, 4, 4);
+            buttonF.Margin = new Padding(4);
             buttonF.Name = "buttonF";
             buttonF.Size = new Size(45, 39);
             buttonF.TabIndex = 12;
@@ -248,7 +249,7 @@
             // buttonG
             // 
             buttonG.Location = new Point(453, 61);
-            buttonG.Margin = new Padding(4, 4, 4, 4);
+            buttonG.Margin = new Padding(4);
             buttonG.Name = "buttonG";
             buttonG.Size = new Size(45, 39);
             buttonG.TabIndex = 11;
@@ -258,7 +259,7 @@
             // buttonA
             // 
             buttonA.Location = new Point(243, 61);
-            buttonA.Margin = new Padding(4, 4, 4, 4);
+            buttonA.Margin = new Padding(4);
             buttonA.Name = "buttonA";
             buttonA.Size = new Size(45, 39);
             buttonA.TabIndex = 10;
@@ -268,7 +269,7 @@
             // buttonU
             // 
             buttonU.Location = new Point(533, 14);
-            buttonU.Margin = new Padding(4, 4, 4, 4);
+            buttonU.Margin = new Padding(4);
             buttonU.Name = "buttonU";
             buttonU.Size = new Size(45, 39);
             buttonU.TabIndex = 9;
@@ -278,7 +279,7 @@
             // buttonI
             // 
             buttonI.Location = new Point(586, 14);
-            buttonI.Margin = new Padding(4, 4, 4, 4);
+            buttonI.Margin = new Padding(4);
             buttonI.Name = "buttonI";
             buttonI.Size = new Size(45, 39);
             buttonI.TabIndex = 8;
@@ -288,7 +289,7 @@
             // buttonO
             // 
             buttonO.Location = new Point(638, 14);
-            buttonO.Margin = new Padding(4, 4, 4, 4);
+            buttonO.Margin = new Padding(4);
             buttonO.Name = "buttonO";
             buttonO.Size = new Size(45, 39);
             buttonO.TabIndex = 7;
@@ -298,7 +299,7 @@
             // buttonP
             // 
             buttonP.Location = new Point(691, 14);
-            buttonP.Margin = new Padding(4, 4, 4, 4);
+            buttonP.Margin = new Padding(4);
             buttonP.Name = "buttonP";
             buttonP.Size = new Size(45, 39);
             buttonP.TabIndex = 6;
@@ -308,7 +309,7 @@
             // buttonY
             // 
             buttonY.Location = new Point(481, 14);
-            buttonY.Margin = new Padding(4, 4, 4, 4);
+            buttonY.Margin = new Padding(4);
             buttonY.Name = "buttonY";
             buttonY.Size = new Size(45, 39);
             buttonY.TabIndex = 5;
@@ -318,7 +319,7 @@
             // buttonW
             // 
             buttonW.Location = new Point(268, 14);
-            buttonW.Margin = new Padding(4, 4, 4, 4);
+            buttonW.Margin = new Padding(4);
             buttonW.Name = "buttonW";
             buttonW.Size = new Size(45, 39);
             buttonW.TabIndex = 4;
@@ -328,7 +329,7 @@
             // buttonE
             // 
             buttonE.Location = new Point(321, 14);
-            buttonE.Margin = new Padding(4, 4, 4, 4);
+            buttonE.Margin = new Padding(4);
             buttonE.Name = "buttonE";
             buttonE.Size = new Size(45, 39);
             buttonE.TabIndex = 3;
@@ -338,7 +339,7 @@
             // buttonR
             // 
             buttonR.Location = new Point(373, 14);
-            buttonR.Margin = new Padding(4, 4, 4, 4);
+            buttonR.Margin = new Padding(4);
             buttonR.Name = "buttonR";
             buttonR.Size = new Size(45, 39);
             buttonR.TabIndex = 2;
@@ -348,7 +349,7 @@
             // buttonT
             // 
             buttonT.Location = new Point(426, 14);
-            buttonT.Margin = new Padding(4, 4, 4, 4);
+            buttonT.Margin = new Padding(4);
             buttonT.Name = "buttonT";
             buttonT.Size = new Size(45, 39);
             buttonT.TabIndex = 1;
@@ -358,7 +359,7 @@
             // buttonQ
             // 
             buttonQ.Location = new Point(216, 14);
-            buttonQ.Margin = new Padding(4, 4, 4, 4);
+            buttonQ.Margin = new Padding(4);
             buttonQ.Name = "buttonQ";
             buttonQ.Size = new Size(45, 39);
             buttonQ.TabIndex = 0;
@@ -368,7 +369,7 @@
             // panel2
             // 
             panel2.Location = new Point(13, 171);
-            panel2.Margin = new Padding(2, 2, 2, 2);
+            panel2.Margin = new Padding(2);
             panel2.Name = "panel2";
             panel2.Size = new Size(948, 78);
             panel2.TabIndex = 1;
@@ -420,7 +421,7 @@
             panel3.Controls.Add(Player2Label);
             panel3.Controls.Add(HostNameLabel);
             panel3.Location = new Point(725, 13);
-            panel3.Margin = new Padding(4, 4, 4, 4);
+            panel3.Margin = new Padding(4);
             panel3.Name = "panel3";
             panel3.Size = new Size(236, 152);
             panel3.TabIndex = 6;
@@ -457,6 +458,11 @@
             PlayTimeOutTimer.Interval = 1000;
             PlayTimeOutTimer.Tick += ReplayTimeOut_Tick;
             // 
+            // ReplayTimer
+            // 
+            ReplayTimer.Interval = 1000;
+            ReplayTimer.Tick += ReplayTimer_Tick;
+            // 
             // Game
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
@@ -468,7 +474,7 @@
             Controls.Add(panel2);
             Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.FixedSingle;
-            Margin = new Padding(2, 2, 2, 2);
+            Margin = new Padding(2);
             MaximizeBox = false;
             Name = "Game";
             StartPosition = FormStartPosition.CenterScreen;
@@ -524,5 +530,6 @@
         private Button buttonT;
         private System.Windows.Forms.Timer PlayTimeOutTimer;
         private Label TimeToGuessLabel;
+        private System.Windows.Forms.Timer ReplayTimer;
     }
 }
