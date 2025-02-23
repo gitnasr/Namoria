@@ -30,70 +30,50 @@
         {
             components = new System.ComponentModel.Container();
             flowLayoutPanel1 = new FlowLayoutPanel();
-            groupBox1 = new GroupBox();
             CreateRoomButton = new Button();
-            groupBox2 = new GroupBox();
             ExitButton = new Button();
             flowLayoutPanel2 = new FlowLayoutPanel();
             timer1 = new System.Windows.Forms.Timer(components);
             flowLayoutPanel1.SuspendLayout();
-            groupBox1.SuspendLayout();
-            groupBox2.SuspendLayout();
             SuspendLayout();
             // 
             // flowLayoutPanel1
             // 
-            flowLayoutPanel1.Controls.Add(groupBox1);
-            flowLayoutPanel1.Controls.Add(groupBox2);
+            flowLayoutPanel1.Controls.Add(CreateRoomButton);
+            flowLayoutPanel1.Controls.Add(ExitButton);
             flowLayoutPanel1.Dock = DockStyle.Bottom;
-            flowLayoutPanel1.Location = new Point(0, 553);
+            flowLayoutPanel1.Location = new Point(0, 580);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(675, 108);
+            flowLayoutPanel1.Size = new Size(666, 81);
             flowLayoutPanel1.TabIndex = 5;
-            // 
-            // groupBox1
-            // 
-            groupBox1.Controls.Add(CreateRoomButton);
-            groupBox1.Location = new Point(3, 3);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(353, 103);
-            groupBox1.TabIndex = 9;
-            groupBox1.TabStop = false;
+            flowLayoutPanel1.WrapContents = false;
             // 
             // CreateRoomButton
             // 
-            CreateRoomButton.BackColor = Color.FromArgb(34, 153, 84);
+            CreateRoomButton.BackColor = Color.FromArgb(61, 141, 122);
             CreateRoomButton.BackgroundImageLayout = ImageLayout.None;
-            CreateRoomButton.Dock = DockStyle.Bottom;
+            CreateRoomButton.FlatAppearance.BorderSize = 0;
             CreateRoomButton.FlatStyle = FlatStyle.Flat;
             CreateRoomButton.ForeColor = Color.Transparent;
-            CreateRoomButton.Location = new Point(3, 15);
+            CreateRoomButton.Location = new Point(3, 3);
             CreateRoomButton.Name = "CreateRoomButton";
-            CreateRoomButton.Size = new Size(347, 85);
+            CreateRoomButton.Size = new Size(477, 73);
             CreateRoomButton.TabIndex = 6;
             CreateRoomButton.Text = "Create a New Room!";
             CreateRoomButton.UseVisualStyleBackColor = false;
             CreateRoomButton.Click += CreateRoomButton_Click;
             // 
-            // groupBox2
-            // 
-            groupBox2.Controls.Add(ExitButton);
-            groupBox2.Location = new Point(362, 3);
-            groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(300, 103);
-            groupBox2.TabIndex = 10;
-            groupBox2.TabStop = false;
-            // 
             // ExitButton
             // 
-            ExitButton.BackColor = Color.FromArgb(225, 117, 100);
-            ExitButton.Dock = DockStyle.Bottom;
+            ExitButton.BackColor = Color.FromArgb(86, 2, 31);
+            ExitButton.FlatAppearance.BorderSize = 0;
             ExitButton.FlatStyle = FlatStyle.Flat;
-            ExitButton.Location = new Point(3, 15);
+            ExitButton.ForeColor = Color.Transparent;
+            ExitButton.Location = new Point(486, 3);
             ExitButton.Name = "ExitButton";
-            ExitButton.Size = new Size(294, 85);
+            ExitButton.Size = new Size(172, 73);
             ExitButton.TabIndex = 6;
-            ExitButton.Text = "Disconnect and Exit";
+            ExitButton.Text = "Exit";
             ExitButton.UseVisualStyleBackColor = false;
             ExitButton.Click += ExitButton_Click;
             // 
@@ -105,10 +85,9 @@
             flowLayoutPanel2.Location = new Point(0, 0);
             flowLayoutPanel2.Name = "flowLayoutPanel2";
             flowLayoutPanel2.Padding = new Padding(10);
-            flowLayoutPanel2.Size = new Size(675, 547);
+            flowLayoutPanel2.Size = new Size(666, 574);
             flowLayoutPanel2.TabIndex = 6;
             flowLayoutPanel2.WrapContents = false;
-            flowLayoutPanel2.Paint += flowLayoutPanel2_Paint;
             // 
             // timer1
             // 
@@ -119,13 +98,14 @@
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(9, 18, 44);
-            ClientSize = new Size(675, 661);
+            BackColor = Color.FromArgb(247, 247, 247);
+            ClientSize = new Size(666, 661);
             Controls.Add(flowLayoutPanel2);
             Controls.Add(flowLayoutPanel1);
-            ForeColor = Color.White;
-            FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            ForeColor = Color.Black;
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             Margin = new Padding(4);
+            MaximizeBox = false;
             Name = "Lobby";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Namoria | Lobby";
@@ -133,8 +113,6 @@
             VisibleChanged += Lobby_VisibleChanged;
             Leave += Lobby_Leave;
             flowLayoutPanel1.ResumeLayout(false);
-            groupBox1.ResumeLayout(false);
-            groupBox2.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -142,8 +120,6 @@
 
         private FlowLayoutPanel flowLayoutPanel1;
         private Button CreateRoomButton;
-        private GroupBox groupBox1;
-        private GroupBox groupBox2;
         private Button ExitButton;
         private FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.Timer timer1;

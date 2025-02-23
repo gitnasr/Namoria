@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-
-namespace Client.UI
+﻿namespace Client.UI
 {
     public enum DefinedColors
     {
@@ -21,14 +16,14 @@ namespace Client.UI
     {
         private static readonly Dictionary<DefinedColors, string> UIColors = new Dictionary<DefinedColors, string>
         {
-            { DefinedColors.primary, "#09122C" },
-            { DefinedColors.secondary, "#872341" },
-            { DefinedColors.success, "#229954" },
-            { DefinedColors.danger, "#E17564" },
-            { DefinedColors.warning, "#FFC107" },
-            { DefinedColors.info, "#17A2B8" },
-                        { DefinedColors.accent, "#4B0082" },   
-            { DefinedColors.neutral, "#2F4F4F" }   
+            { DefinedColors.primary, "#F7F7F7" },
+            { DefinedColors.secondary, "#000000" },
+            { DefinedColors.success, "#2C3930" },
+            { DefinedColors.danger, "#56021F" },
+            { DefinedColors.warning, "#FFB22C" },
+            { DefinedColors.info, "#00879E" },
+            { DefinedColors.accent, "#AA60C8" },
+            { DefinedColors.neutral, "#FFDFEF" }
 
         };
 

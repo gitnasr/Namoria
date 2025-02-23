@@ -1,5 +1,4 @@
 ﻿using Server;
-using System.Reflection;
 
 
 
@@ -27,15 +26,16 @@ public class Room
     {
         Watchers = new List<Client>();
         ReveledLetters = Array.Empty<char>();
-
-
+        Host = new Client();
+        RandomWord = string.Empty;
+        Category = string.Empty;
     }
 
     public void AddWatcher(Client client)
     {
         Watchers.Add(client);
     }
-    private static int GetNextRoomId()
+    private static int GetRoomID()
     {
         lock (countLock)
         {
@@ -45,7 +45,7 @@ public class Room
     public Room(Client host, string category)
     {
         Category = category;
-        roomID = GetNextRoomId();
+        roomID = GetRoomID();
         Host = host;
         RandomWord = GenerateRandomWord();
         ReveledLetters = new char[RandomWord.Length];
@@ -66,20 +66,10 @@ public class Room
 
     private string GenerateRandomWord()
     {
-        List<string> categories = new List<string>();
-        string filePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Categories", Category + ".txt");
-        string[] words = File.ReadAllLines(filePath);
+        string[] Words = Categories.GetWordsByCategory(Category);
 
-        if (words.Length == 0)
-        {
-            throw new Exception("Category file is empty.");
-        }
-
-
-        int index = random.Next(words.Length);
-        Console.WriteLine(index);
-        Console.WriteLine(words[index]);
-        return words[index];
+        int index = random.Next(Words.Length);
+        return Words[index];
     }
     public void ResetRoom(Client winner)
     {

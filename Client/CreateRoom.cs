@@ -1,14 +1,15 @@
-﻿namespace Client
+﻿using System.Text.Json;
+
+namespace Client
 {
     public partial class CreateRoom : Form
     {
         private string? SelectedCategory;
-        private Form parentForm;
 
+        public int RoomID { get; private set; }
 
-        public CreateRoom(Form ParentForm)
+        public CreateRoom()
         {
-            parentForm = ParentForm;
 
             InitializeComponent();
         }
@@ -17,39 +18,26 @@
         {
             try
             {
-                await Task.Run(() =>
+
+
+                Connection.SendToServer(PlayEvents.GET_CATEGORIES);
+                string response = await Task.Run(() => Connection.ReadFromServer.ReadString());
+                ProcessedEvent eventResult = EventProcessor.ProcessEvent(response);
+                if (eventResult.Event == PlayEvents.SEND_CATEGORIES)
                 {
-
-                    Connection.SendToServer(PlayEvents.GET_CATEGORIES);
-                    List<string> categories = new List<string>();
-                    while (true)
+                    string ReceivedCategoriesAsString = eventResult.Data;
+                    List<string>? CategoriesAsList = JsonSerializer.Deserialize<List<string>>(ReceivedCategoriesAsString);
+                    if (CategoriesAsList != null && CategoriesAsList.Count > 0)
                     {
-                        string response = Connection.ReadFromServer.ReadString();
-
-                        ProcessedEvent eventResult = EventProcessor.ProcessEvent(response);
-
-                        switch (eventResult.Event)
+                        this.Invoke(new Action(() =>
                         {
-
-                            case PlayEvents.SEND_CATEGORIES:
-                                categories.Add(eventResult.Data);
-                                break;
-
-                        }
-
-                        if (eventResult.Event == PlayEvents.END)
-                        {
-                            break;
-                        }
-
-
+                            DisplayCategories(CategoriesAsList);
+                        }));
                     }
 
-                    this.Invoke(new Action(() =>
-                    {
-                        DisplayCategories(categories);
-                    }));
-                });
+
+                }
+
             }
             catch (Exception ex)
             {
@@ -59,29 +47,20 @@
 
         private void DisplayCategories(List<string> categories)
         {
-            int i = 0;
-            foreach (var category in categories)
+            ComboBox CategoriesMenu = CategoriesDropDown;
+            CategoriesMenu.Items.AddRange(categories.ToArray());
+
+            if (categories.Count > 0)
             {
-                RadioButton radioButton = new RadioButton();
-                radioButton.Text = category;
-                radioButton.Click += RadioButton_Click;
-                radioButton.AutoSize = true;
-                radioButton.ForeColor = Color.White;
-                CategoriesTable.SetColumn(radioButton, i);
-                CategoriesTable.Controls.Add(radioButton);
-
-                i++;
-
+                CategoriesMenu.SelectedItem = categories[0];
+                SelectedCategory = categories[0];
             }
 
+            CategoriesMenu.SelectedIndexChanged += (sender, e) =>
+            {
+                SelectedCategory = CategoriesMenu.SelectedItem?.ToString();
+            };
         }
-
-        private void RadioButton_Click(object? sender, EventArgs e)
-        {
-            RadioButton radioButton = (RadioButton)sender!;
-            SelectedCategory = radioButton.Text;
-        }
-
 
 
 
@@ -110,10 +89,10 @@
                     MessageBox.Show("Error creating room", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-                Form GameForm = new Game(roomID);
 
-                GameForm.Show();
-                this.Hide();
+                RoomID = roomID;
+                DialogResult = DialogResult.OK;
+                this.Close();
             }
             else
             {
@@ -123,23 +102,10 @@
 
         private void BackButton_Click(object sender, EventArgs e)
         {
-            this.parentForm.Show();
-            this.Close();
+
+            this.DialogResult = DialogResult.Cancel;
         }
 
-        private void CreateRoom_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            if (this.parentForm != null)
-            {
 
-                parentForm.Show();
-
-            }
-            else
-            {
-                Application.Exit();
-            }
-
-        }
     }
 }
