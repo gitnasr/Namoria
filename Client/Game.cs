@@ -325,8 +325,8 @@ namespace Client
                 Application.Exit();
             }
         }
-    }
-    private void HandleGameOver()
+
+        private void HandleGameOver()
         {
             DisableButtons();
             StopPlayTimer();
