@@ -1,15 +1,11 @@
 ﻿using Client.UI;
-using System;
-using System.Drawing;
-using System.Windows.Forms;
 
 public class RoomCard : Panel
 {
     public int RoomID { get; private set; }
 
-    public event EventHandler<int> JoinClicked;
-    public event EventHandler<int> WatchClicked;
-
+    public event EventHandler<int>? JoinClicked;
+    public event EventHandler<int>? WatchClicked;
 
     private Label RoomLabelID;
     private Label HostLabel;
@@ -17,7 +13,6 @@ public class RoomCard : Panel
     public Button JoinButton { get; private set; }
     public Button WatchButton { get; private set; }
     public Label RoomStatus { get; private set; }
-
 
     private RoomState _roomState;
     public RoomState State
@@ -29,7 +24,7 @@ public class RoomCard : Panel
             UpdateJoinButtonState();
         }
     }
-    public RoomCard(int id, string name, string status, int ParentWidth )
+    public RoomCard(int id, string name, string status, int ParentWidth)
     {
         this.RoomID = id;
         this.BackColor = Colors.GetColor(DefinedColors.primary);
@@ -37,9 +32,9 @@ public class RoomCard : Panel
         this.Padding = new Padding(15);
         this.Margin = new Padding(10);
         this.Height = 100;
-        this.Width = ParentWidth -  20;
+        this.Width = (ParentWidth - 5) - 20;
 
-         RoomLabelID = new Label
+        RoomLabelID = new Label
         {
             Text = $"#{id}",
             Font = new Font("Arial", 12, FontStyle.Bold),
@@ -48,7 +43,7 @@ public class RoomCard : Panel
             TextAlign = ContentAlignment.TopRight
         };
 
-         HostLabel = new Label
+        HostLabel = new Label
         {
             Text = $"Host: {name}",
             Font = new Font("Arial", 12, FontStyle.Bold),
@@ -56,7 +51,7 @@ public class RoomCard : Panel
             AutoSize = true
         };
 
-         RoomStatus = new Label
+        RoomStatus = new Label
         {
             Text = status.ToUpper(),
             Font = new Font("Arial", 8),
@@ -64,7 +59,7 @@ public class RoomCard : Panel
             AutoSize = true
         };
 
-         JoinButton = new Button
+        JoinButton = new Button
         {
             Text = "JOIN",
             BackColor = Colors.GetColor(DefinedColors.neutral),
@@ -74,7 +69,7 @@ public class RoomCard : Panel
         };
         JoinButton.Click += (s, e) => JoinClicked?.Invoke(this, RoomID);
 
-         WatchButton = new Button
+        WatchButton = new Button
         {
             Text = "WATCH",
             BackColor = Colors.GetColor(DefinedColors.accent),
@@ -115,7 +110,7 @@ public class RoomCard : Panel
 
         JoinButton.Enabled = State == RoomState.WAITING;
     }
-    
+
     public enum RoomState
     {
         WAITING,

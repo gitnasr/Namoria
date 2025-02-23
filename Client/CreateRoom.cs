@@ -66,7 +66,6 @@
                 radioButton.Text = category;
                 radioButton.Click += RadioButton_Click;
                 radioButton.AutoSize = true;
-                radioButton.ForeColor = Color.White;
                 CategoriesTable.SetColumn(radioButton, i);
                 CategoriesTable.Controls.Add(radioButton);
 

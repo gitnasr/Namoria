@@ -156,7 +156,7 @@ namespace Client
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            OnLoadGetRooms();
+            _ = OnLoadGetRooms();
         }
 
         private void Lobby_VisibleChanged(object sender, EventArgs e)

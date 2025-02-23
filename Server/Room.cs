@@ -27,8 +27,9 @@ public class Room
     {
         Watchers = new List<Client>();
         ReveledLetters = Array.Empty<char>();
-
-
+        Host = new Client();
+        RandomWord = string.Empty;
+        Category = string.Empty;
     }
 
     public void AddWatcher(Client client)
