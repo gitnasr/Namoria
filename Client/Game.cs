@@ -160,6 +160,12 @@ namespace Client
                                 MessageBox.Show("It is not your turn!");
                                 break;
                             }
+                        case PlayEvents.JOIN_REQUEST:
+                            {
+                                AcceptJoinRequest(processedEvent.Data);
+
+                                break;
+                            }
 
 
                     }
@@ -172,6 +178,23 @@ namespace Client
                 Application.Exit();
             }
         }
+        private void AcceptJoinRequest(string PlayerId)
+        {
+            DialogResult request = MessageBox.Show("A Player wants to join the room",
+                                                   "Join Request",
+                                                   MessageBoxButtons.YesNo,
+                                                   MessageBoxIcon.Question);
+
+            if (request == DialogResult.Yes)
+            {
+                Connection.SendToServer(PlayEvents.JOIN_ACCEPTED, $"{RoomID}|{PlayerId}");
+            }
+            else
+            {
+                Connection.SendToServer(PlayEvents.DENY_ENTER, $"{RoomID}|{PlayerId}");
+            }
+        }
+
         private void UpdateGameStateUI()
         {
             if (this.IsDisposed || !this.IsHandleCreated)
@@ -278,15 +301,6 @@ namespace Client
         }
 
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void ReplayTimeOut_Tick(object sender, EventArgs e)
         {

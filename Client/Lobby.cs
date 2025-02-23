@@ -12,6 +12,8 @@ namespace Client
         private List<RoomCard> roomCards = new List<RoomCard>();
         private FlowLayoutPanel RoomPanel;
 
+        private int PendingJoinRoomID = -1;
+
 
 
 
@@ -39,6 +41,8 @@ namespace Client
 
         private async Task OnLoadGetRooms()
         {
+            PendingJoinRoomID = -1;
+
             Connection.SendToServer(PlayEvents.GET_ROOMS);
             List<RoomCard> RoomCards = [];
 
@@ -49,11 +53,13 @@ namespace Client
                     string response = await Task.Run(() => Connection.ReadFromServer.ReadString());
                     ProcessedEvent parsedEvent = EventProcessor.ProcessEvent(response);
 
+
                     switch (parsedEvent.Event)
                     {
                         case PlayEvents.SEND_ROOM:
                             HandleRoomData(parsedEvent.Data, RoomCards);
                             break;
+
 
                         case PlayEvents.END:
                             Invoke((MethodInvoker)delegate
@@ -66,6 +72,7 @@ namespace Client
                                 }
                             });
                             return;
+
                     }
                 }
                 catch (Exception ex)
@@ -87,12 +94,56 @@ namespace Client
 
         }
 
-        private void JoinRoom(int RoomID)
+        private async void SendJoinRequest(int RoomID)
         {
+            PendingJoinRoomID = RoomID;
+            await Task.Delay(1000);
+            timer1.Stop();
             Connection.SendToServer(PlayEvents.JOIN_ROOM, RoomID);
-            Game form = new Game(RoomID);
-            form.Show();
-            Hide();
+
+            try
+            {
+                while (true)
+                {
+                    string response = await Task.Run(() => Connection.ReadFromServer.ReadString());
+
+                    ProcessedEvent parsedEvent = EventProcessor.ProcessEvent(response);
+
+                    if (parsedEvent.Event == PlayEvents.START_GAME)
+                    {
+                        this.Invoke(new Action(() =>
+                        {
+                            Game form = new Game(RoomID);
+                            form.Show();
+                            Hide();
+                        }));
+                        return;
+                    }
+                    else if (parsedEvent.Event == PlayEvents.REJECTED_JOIN)
+                    {
+                        MessageBox.Show("Host Rejected You :P");
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error joining room: {ex.Message}");
+            }
+            finally
+            {
+
+                this.Invoke(new Action(() =>
+                {
+                    timer1.Start();
+                }));
+            }
+        }
+
+
+        private async Task JoinRoomAsync(int RoomID)
+        {
+            await Task.Run(() => SendJoinRequest(RoomID));
 
         }
 
@@ -110,7 +161,19 @@ namespace Client
                     {
                         card.JoinButton.Enabled = false;
                     }
-                    card.JoinClicked += (s, id) => JoinRoom(Room.roomID);
+
+                    if (Room.roomID == PendingJoinRoomID)
+                    {
+                        card.JoinButton.Enabled = false;
+                        card.JoinButton.Text = "Joining...";
+                    }
+                    if (Room.RoomState == RoomState.UNAVAILABLE)
+                    {
+                        card.JoinButton.Enabled = false;
+                        card.JoinButton.Text = "Someone else is joining";
+                    }
+
+                    card.JoinClicked += (s, id) => JoinRoomAsync(Room.roomID);
                     card.WatchClicked += (s, id) => WatchRoom(Room.roomID);
                     IncomingRoomList.Add(card);
                 }

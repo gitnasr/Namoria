@@ -21,7 +21,12 @@
     NOT_YOUR_TURN,
     REPLAY_RESPONSE,
     CLIENT_ID,
-    SWITCH_TURNS
+    SWITCH_TURNS,
+    JOIN_ACCEPTED,
+    JOIN_REQUEST,
+    START_GAME,
+    REJECTED_JOIN,
+    DENY_ENTER
 }
 
 
@@ -29,6 +34,7 @@ public enum RoomState
 {
     WAITING,
     PLAYING,
+    UNAVAILABLE,
     END
 }
 public class ProcessedEvent

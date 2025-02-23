@@ -110,7 +110,6 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Namoria | Lobby";
             Load += Form1_Load;
-            VisibleChanged += Lobby_VisibleChanged;
             Leave += Lobby_Leave;
             flowLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
