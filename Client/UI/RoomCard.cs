@@ -28,26 +28,24 @@ public class RoomCard : Panel
     {
         this.RoomID = id;
         this.BackColor = Colors.GetColor(DefinedColors.primary);
-        this.BorderStyle = BorderStyle.FixedSingle;
         this.Padding = new Padding(15);
-        this.Margin = new Padding(10);
         this.Height = 100;
-        this.Width = (ParentWidth - 5) - 20;
-
+        this.Width = (ParentWidth) - 35;
+        Padding RoomPadding = new Padding(0, 0, 15, 0);
         RoomLabelID = new Label
         {
             Text = $"#{id}",
             Font = new Font("Arial", 12, FontStyle.Bold),
-            ForeColor = Colors.GetColor(DefinedColors.secondary),
+            ForeColor = Colors.GetColor(DefinedColors.info),
             AutoSize = true,
-            TextAlign = ContentAlignment.TopRight
+            Padding = RoomPadding,
         };
 
         HostLabel = new Label
         {
             Text = $"Host: {name}",
             Font = new Font("Arial", 12, FontStyle.Bold),
-            ForeColor = Colors.GetColor(DefinedColors.info),
+            ForeColor = Colors.GetColor(DefinedColors.accent),
             AutoSize = true
         };
 
@@ -55,27 +53,21 @@ public class RoomCard : Panel
         {
             Text = status.ToUpper(),
             Font = new Font("Arial", 8),
-            ForeColor = Colors.GetColor(DefinedColors.warning),
+            ForeColor = Colors.GetColor(DefinedColors.info),
             AutoSize = true
         };
 
         JoinButton = new Button
         {
             Text = "JOIN",
-            BackColor = Colors.GetColor(DefinedColors.neutral),
-            ForeColor = Color.White,
             AutoSize = true,
-            FlatStyle = FlatStyle.Flat
         };
         JoinButton.Click += (s, e) => JoinClicked?.Invoke(this, RoomID);
 
         WatchButton = new Button
         {
             Text = "WATCH",
-            BackColor = Colors.GetColor(DefinedColors.accent),
-            ForeColor = Color.White,
             AutoSize = true,
-            FlatStyle = FlatStyle.Flat
         };
         WatchButton.Click += (s, e) => WatchClicked?.Invoke(this, RoomID);
 
@@ -95,7 +87,7 @@ public class RoomCard : Panel
         this.Controls.Add(RoomStatus);
         this.Controls.Add(buttonPanel);
 
-        RoomLabelID.Location = new Point(ParentWidth - RoomLabelID.Width - 30, 10);
+        RoomLabelID.Location = new Point(ParentWidth - RoomLabelID.Width - 35, 10);
         HostLabel.Location = new Point(10, 10);
         RoomStatus.Location = new Point(10, 40);
         buttonPanel.Location = new Point(10, 70);
