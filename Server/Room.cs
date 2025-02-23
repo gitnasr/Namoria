@@ -1,5 +1,4 @@
 ﻿using Server;
-using System.Reflection;
 
 
 
@@ -67,20 +66,10 @@ public class Room
 
     private string GenerateRandomWord()
     {
-        List<string> categories = new List<string>();
-        string filePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Categories", Category + ".txt");
-        string[] words = File.ReadAllLines(filePath);
+        string[] Words = Categories.GetWordsByCategory(Category);
 
-        if (words.Length == 0)
-        {
-            throw new Exception("Category file is empty.");
-        }
-
-
-        int index = random.Next(words.Length);
-        Console.WriteLine(index);
-        Console.WriteLine(words[index]);
-        return words[index];
+        int index = random.Next(Words.Length);
+        return Words[index];
     }
     public void ResetRoom(Client winner)
     {

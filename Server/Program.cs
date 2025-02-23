@@ -1,13 +1,11 @@
 ﻿using Server;
 using System.Net;
 using System.Net.Sockets;
-using System.Reflection;
 using System.Text.Json;
 
 class GameServer
 {
-    public static List<string> Categories = new List<string>();
-
+    static Categories categories = new Categories();
     static Dictionary<TcpClient, Client> clients = new Dictionary<TcpClient, Client>();
     static object lockObj = new object();
     static int ClientsCount = 0;
@@ -19,7 +17,7 @@ class GameServer
         TcpListener server = new TcpListener(IPAddress.Any, 4782);
         server.Start();
         Console.WriteLine("Server started on port 4782...");
-        FetchFiles();
+
         while (true)
         {
             TcpClient client = server.AcceptTcpClient();
@@ -136,11 +134,8 @@ class GameServer
                 {
                     case PlayEvents.GET_CATEGORIES:
                         {
-                            foreach (string category in Categories)
-                            {
-                                WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.SEND_CATEGORIES, category));
-                            }
-                            WriteToClient.Write(EventProcessor.EventAsSting(PlayEvents.END));
+                            string Categories = categories.CategoriesAsJson();
+                            WriteToClient.Write(EventProcessor.SendEventWithData(PlayEvents.SEND_CATEGORIES, Categories));
                         }
                         break;
 
@@ -415,27 +410,6 @@ class GameServer
     }
 
 
-    static void FetchFiles()
-    {
-        string? ExEPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        if (ExEPath == null)
-        {
-            Console.WriteLine("Path is null");
-            return;
-        }
-        string path = Path.Combine(ExEPath, "Categories");
-        try
-        {
-            foreach (string file in Directory.GetFiles(path))
-            {
-                string[] File = Path.GetFileName(file).Split('.');
-                Categories.Add(File[0]);
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Access Denied :{ex.Message}");
-        }
-    }
+
 
 }
