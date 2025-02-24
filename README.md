@@ -147,4 +147,10 @@ Please ensure your contributions align with the project's goals and coding style
 
 ---
 
-Thank you for checking out Namoria! Have fun playing and contributing! 🎉
+
+Made with ❤️ By
+@gitnasr
+@Nourleyy
+@Elkalaf99
+@sherineAhmed
+@nouranyasserr
