@@ -147,4 +147,9 @@ Please ensure your contributions align with the project's goals and coding style
 
 ---
 
-Thank you for checking out Namoria! Have fun playing and contributing! 🎉
+Made with ❤️ By  
+[![GitHub Avatar](https://github.com/gitnasr.png?size=50)](https://github.com/gitnasr)  
+[![GitHub Avatar](https://github.com/Nourleyy.png?size=50)](https://github.com/Nourleyy)  
+[![GitHub Avatar](https://github.com/Elkalaf99.png?size=50)](https://github.com/Elkalaf99)  
+[![GitHub Avatar](https://github.com/sherineAhmed.png?size=50)](https://github.com/sherineAhmed)  
+[![GitHub Avatar](https://github.com/nouranyasserr.png?size=50)](https://github.com/nouranyasserr)
