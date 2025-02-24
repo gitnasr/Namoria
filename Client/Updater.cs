@@ -11,7 +11,7 @@ namespace Client
 {
     internal class Updater
     {
-        private string TagVersion = "v1.0.1";
+        private string TagVersion = "v1.0.0";
         private readonly string GithubRepo = "https://api.github.com/repos/gitnasr/Namoria/releases";
         private  readonly HttpClient client = new HttpClient();
 
