@@ -97,7 +97,7 @@ namespace Client
         private async void SendJoinRequest(int RoomID)
         {
             PendingJoinRoomID = RoomID;
-            await Task.Delay(1000);
+            Thread.Sleep(1000);
             timer1.Stop();
             Connection.SendToServer(PlayEvents.JOIN_ROOM, RoomID);
 
@@ -122,6 +122,10 @@ namespace Client
                     else if (parsedEvent.Event == PlayEvents.REJECTED_JOIN)
                     {
                         MessageBox.Show("Host Rejected You :P");
+                        this.Invoke(new Action(() =>
+                        {
+                            timer1.Start();
+                        }));
                         break;
                     }
                 }
@@ -133,10 +137,7 @@ namespace Client
             finally
             {
 
-                this.Invoke(new Action(() =>
-                {
-                    timer1.Start();
-                }));
+                
             }
         }
 
