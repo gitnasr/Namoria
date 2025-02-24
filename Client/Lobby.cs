@@ -14,6 +14,8 @@ namespace Client
 
         private int PendingJoinRoomID = -1;
 
+        private Updater updater = new Updater();
+
 
 
 
@@ -87,7 +89,7 @@ namespace Client
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Connection.CheckForUpdate();
+          updater.CheckForUpdate();
 
             CreateRoomButton.Text += $" as {PlayerUsername} \n You can play {Connection.ConnectionType}";
             timer1.Start();
