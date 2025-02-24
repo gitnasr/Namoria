@@ -31,7 +31,7 @@ To get Namoria up and running on your local machine, follow these steps:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/gitnasr-namoria/Namoria.git
+   git clone https://github.com/gitnasr/Namoria.git
    cd Namoria
    ```
 
@@ -148,4 +148,3 @@ Please ensure your contributions align with the project's goals and coding style
 ---
 
 Thank you for checking out Namoria! Have fun playing and contributing! 🎉
-```
